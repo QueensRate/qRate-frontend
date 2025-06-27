@@ -1,0 +1,348 @@
+import { useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Star, ThumbsUp, ThumbsDown, ArrowLeft, Calendar, User, BookOpen } from "lucide-react";
+
+const CourseDetail = () => {
+  const { id } = useParams();
+  const [helpfulReviews, setHelpfulReviews] = useState<{ [key: number]: boolean }>({});
+
+  // Mock course data (in a real app, this would be fetched based on the ID)
+  const course = {
+    id: 1,
+    code: "COMP 102",
+    name: "Introduction to Computing",
+    department: "Computing",
+    credits: 3,
+    description: "An introduction to computer science and programming fundamentals using Python. Topics include data types, control structures, functions, and basic algorithms.",
+    ratings: {
+      overall: 4.2,
+      difficulty: 2.8,
+      usefulness: 4.5,
+      workload: 3.2,
+      teaching: 4.1
+    },
+    ratingDistribution: {
+      5: 45,
+      4: 32,
+      3: 15,
+      2: 6,
+      1: 2
+    },
+    totalReviews: 89,
+    tags: ["beginner-friendly", "programming", "python", "engaging"],
+    prerequisites: ["None"],
+    reviews: [
+      {
+        id: 1,
+        instructor: "Dr. Smith",
+        term: "Fall 2023",
+        rating: 5,
+        difficulty: 2,
+        usefulness: 5,
+        workload: 3,
+        comment: "Great introduction to programming! Dr. Smith explains concepts clearly and the assignments are well-structured. Perfect for beginners with no prior coding experience.",
+        helpful: 24,
+        notHelpful: 2,
+        date: "2023-12-15"
+      },
+      {
+        id: 2,
+        instructor: "Dr. Smith",
+        term: "Winter 2024",
+        rating: 4,
+        difficulty: 3,
+        usefulness: 4,
+        workload: 4,
+        comment: "Solid course overall. The pace can be a bit fast sometimes, but the material is very relevant. Make sure to stay on top of the weekly assignments.",
+        helpful: 18,
+        notHelpful: 1,
+        date: "2024-04-20"
+      },
+      {
+        id: 3,
+        instructor: "Prof. Johnson",
+        term: "Fall 2023",
+        rating: 3,
+        difficulty: 4,
+        usefulness: 4,
+        workload: 3,
+        comment: "Course content is good but Prof. Johnson's teaching style didn't click with me. Office hours were helpful though. Assignments are fair.",
+        helpful: 12,
+        notHelpful: 5,
+        date: "2023-12-10"
+      }
+    ]
+  };
+
+  const handleHelpfulVote = (reviewId: number, isHelpful: boolean) => {
+    setHelpfulReviews(prev => ({
+      ...prev,
+      [reviewId]: isHelpful
+    }));
+  };
+
+  const getRatingColor = (rating: number) => {
+    if (rating >= 4) return "text-green-600";
+    if (rating >= 3) return "text-yellow-600";
+    return "text-red-600";
+  };
+
+  const getDifficultyColor = (difficulty: number) => {
+    if (difficulty >= 4) return "text-red-600";
+    if (difficulty >= 3) return "text-yellow-600";
+    return "text-green-600";
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <Link to="/" className="flex items-center space-x-2">
+            <div className="bg-blue-900 text-yellow-400 p-2 rounded-lg font-bold text-xl">
+              qRate
+            </div>
+            <span className="text-gray-600 text-sm">Queen's University</span>
+          </Link>
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link to="/" className="text-gray-700 hover:text-blue-900 transition-colors">
+              Home
+            </Link>
+            <Link to="/browse" className="text-gray-700 hover:text-blue-900 transition-colors">
+              Browse Courses
+            </Link>
+            <Link to="/submit-review" className="text-gray-700 hover:text-blue-900 transition-colors">
+              Submit Review
+            </Link>
+            <Button variant="outline" className="border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white">
+              Sign In
+            </Button>
+          </nav>
+        </div>
+      </header>
+
+      <div className="container mx-auto px-4 py-8">
+        {/* Back Navigation */}
+        <Button variant="ghost" className="mb-6" asChild>
+          <Link to="/browse">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Browse
+          </Link>
+        </Button>
+
+        {/* Course Header */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 mb-8">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h1 className="text-4xl font-bold text-blue-900 mb-2">{course.code}</h1>
+              <h2 className="text-2xl text-gray-700 mb-4">{course.name}</h2>
+              <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <span className="flex items-center">
+                  <BookOpen className="h-4 w-4 mr-1" />
+                  {course.department}
+                </span>
+                <span>{course.credits} credits</span>
+                <span>{course.totalReviews} reviews</span>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="flex items-center space-x-2 mb-2">
+                <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
+                <span className="text-3xl font-bold">{course.ratings.overall}</span>
+              </div>
+              <Button className="bg-blue-900 hover:bg-blue-800 text-white">
+                Write a Review
+              </Button>
+            </div>
+          </div>
+
+          <p className="text-gray-700 mb-6">{course.description}</p>
+
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            {course.tags.map((tag, index) => (
+              <Badge key={index} variant="secondary">{tag}</Badge>
+            ))}
+          </div>
+
+          {/* Prerequisites */}
+          <div className="text-sm">
+            <span className="font-medium text-gray-700">Prerequisites: </span>
+            <span className="text-gray-600">{course.prerequisites.join(", ")}</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Ratings Overview */}
+          <div className="lg:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle>Ratings Overview</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Overall Rating */}
+                <div className="text-center pb-4 border-b">
+                  <div className="text-5xl font-bold text-blue-900 mb-2">{course.ratings.overall}</div>
+                  <div className="flex justify-center mb-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        className={`h-5 w-5 ${star <= Math.round(course.ratings.overall) 
+                          ? 'fill-yellow-400 text-yellow-400' 
+                          : 'text-gray-300'}`}
+                      />
+                    ))}
+                  </div>
+                  <div className="text-sm text-gray-600">{course.totalReviews} total ratings</div>
+                </div>
+
+                {/* Rating Categories */}
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Difficulty</span>
+                    <span className={`font-bold ${getDifficultyColor(course.ratings.difficulty)}`}>
+                      {course.ratings.difficulty}/5
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Usefulness</span>
+                    <span className={`font-bold ${getRatingColor(course.ratings.usefulness)}`}>
+                      {course.ratings.usefulness}/5
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Workload</span>
+                    <span className={`font-bold ${getDifficultyColor(course.ratings.workload)}`}>
+                      {course.ratings.workload}/5
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium">Teaching Quality</span>
+                    <span className={`font-bold ${getRatingColor(course.ratings.teaching)}`}>
+                      {course.ratings.teaching}/5
+                    </span>
+                  </div>
+                </div>
+
+                {/* Rating Distribution */}
+                <div className="pt-4 border-t">
+                  <h4 className="font-medium mb-3">Rating Distribution</h4>
+                  {[5, 4, 3, 2, 1].map((rating) => (
+                    <div key={rating} className="flex items-center space-x-2 mb-2">
+                      <span className="text-sm w-4">{rating}</span>
+                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                      <Progress 
+                        value={(course.ratingDistribution[rating as keyof typeof course.ratingDistribution] / course.totalReviews) * 100} 
+                        className="flex-1 h-2" 
+                      />
+                      <span className="text-sm text-gray-500 w-8">
+                        {course.ratingDistribution[rating as keyof typeof course.ratingDistribution]}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Reviews */}
+          <div className="lg:col-span-2">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-bold">Student Reviews</h3>
+              <Button variant="outline">Sort by: Most Helpful</Button>
+            </div>
+
+            <div className="space-y-6">
+              {course.reviews.map((review) => (
+                <Card key={review.id}>
+                  <CardContent className="p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-1">
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star
+                              key={star}
+                              className={`h-4 w-4 ${star <= review.rating 
+                                ? 'fill-yellow-400 text-yellow-400' 
+                                : 'text-gray-300'}`}
+                            />
+                          ))}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          <span className="flex items-center">
+                            <User className="h-4 w-4 mr-1" />
+                            {review.instructor}
+                          </span>
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          <span className="flex items-center">
+                            <Calendar className="h-4 w-4 mr-1" />
+                            {review.term}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-sm text-gray-500">{review.date}</div>
+                    </div>
+
+                    {/* Individual Ratings */}
+                    <div className="grid grid-cols-3 gap-4 mb-4 p-3 bg-gray-50 rounded">
+                      <div className="text-center">
+                        <div className="text-xs text-gray-600">Difficulty</div>
+                        <div className={`font-bold ${getDifficultyColor(review.difficulty)}`}>
+                          {review.difficulty}/5
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-600">Usefulness</div>
+                        <div className={`font-bold ${getRatingColor(review.usefulness)}`}>
+                          {review.usefulness}/5
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-600">Workload</div>
+                        <div className={`font-bold ${getDifficultyColor(review.workload)}`}>
+                          {review.workload}/5
+                        </div>
+                      </div>
+                    </div>
+
+                    <p className="text-gray-700 mb-4">{review.comment}</p>
+
+                    {/* Helpful Buttons */}
+                    <div className="flex items-center space-x-4 text-sm">
+                      <span className="text-gray-600">Was this helpful?</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleHelpfulVote(review.id, true)}
+                        className={`${helpfulReviews[review.id] === true ? 'bg-green-100 text-green-700' : ''}`}
+                      >
+                        <ThumbsUp className="h-4 w-4 mr-1" />
+                        Yes ({review.helpful})
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleHelpfulVote(review.id, false)}
+                        className={`${helpfulReviews[review.id] === false ? 'bg-red-100 text-red-700' : ''}`}
+                      >
+                        <ThumbsDown className="h-4 w-4 mr-1" />
+                        No ({review.notHelpful})
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CourseDetail;
