@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,92 +6,31 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Star, Search, Filter, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const BrowseCourses = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedRating, setSelectedRating] = useState("");
 
-  const courses = [
-    {
-      id: 1,
-      code: "COMP 102",
-      name: "Introduction to Computing",
-      department: "Computing",
-      instructor: "Dr. Smith",
-      rating: 4.2,
-      difficulty: 2.8,
-      usefulness: 4.5,
-      workload: 3.2,
-      reviews: 89,
-      tags: ["beginner-friendly", "programming"]
-    },
-    {
-      id: 2,
-      code: "ELEC 221",
-      name: "Electric Circuits",
-      department: "Electrical Engineering",
-      instructor: "Prof. Johnson",
-      rating: 3.8,
-      difficulty: 4.1,
-      usefulness: 4.0,
-      workload: 4.3,
-      reviews: 67,
-      tags: ["math-heavy", "lab-intensive"]
-    },
-    {
-      id: 3,
-      code: "MATH 120",
-      name: "Differential and Integral Calculus",
-      department: "Mathematics",
-      instructor: "Dr. Wilson",
-      rating: 3.5,
-      difficulty: 4.5,
-      usefulness: 3.8,
-      workload: 4.0,
-      reviews: 234,
-      tags: ["challenging", "fundamental"]
-    },
-    {
-      id: 4,
-      code: "PSYC 100",
-      name: "Introduction to Psychology",
-      department: "Psychology",
-      instructor: "Prof. Davis",
-      rating: 4.1,
-      difficulty: 2.5,
-      usefulness: 3.9,
-      workload: 2.8,
-      reviews: 156,
-      tags: ["easy-a", "interesting"]
-    },
-    {
-      id: 5,
-      code: "BUSI 200",
-      name: "Introduction to Business",
-      department: "Business",
-      instructor: "Dr. Brown",
-      rating: 3.9,
-      difficulty: 3.2,
-      usefulness: 4.2,
-      workload: 3.5,
-      reviews: 98,
-      tags: ["practical", "group-work"]
-    },
-    {
-      id: 6,
-      code: "CHEM 112",
-      name: "General Chemistry",
-      department: "Chemistry",
-      instructor: "Prof. Taylor",
-      rating: 3.4,
-      difficulty: 4.2,
-      usefulness: 3.7,
-      workload: 4.1,
-      reviews: 178,
-      tags: ["lab-heavy", "memorization"]
-    }
-  ];
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await axios.get("http://localhost:5000/api/courses");
+        setCourses(res.data);
+      } catch (error) {
+        console.error("Failed to fetch courses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
 
   const departments = ["Computing", "Electrical Engineering", "Mathematics", "Psychology", "Business", "Chemistry"];
 
