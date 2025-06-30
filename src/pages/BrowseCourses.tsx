@@ -19,7 +19,7 @@ const BrowseCourses = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/courses");
+        const res = await axios.get("http://localhost:8000/api/v1/courses");
         setCourses(res.data);
       } catch (error) {
         console.error("Failed to fetch courses:", error);
@@ -170,7 +170,7 @@ const BrowseCourses = () => {
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2">
-                    {course.tags.map((tag, index) => (
+                    {course.tags?.map((tag, index) => (
                       <Badge key={index} variant="secondary" className="text-xs">
                         {tag}
                       </Badge>
