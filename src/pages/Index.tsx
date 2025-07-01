@@ -72,7 +72,7 @@ const Index = () => {
                 asChild
                 variant="outline"
                 size="lg"
-                className="border-yellow-400 text-yellow-400 hover:bg-yellow-400 hover:text-blue-900 px-8 py-3"
+                className="border-white text-[#a01c3c] hover:bg-[#a01c3c]  hover:text-white px-8 py-3" 
                 >
                 <Link to="/submit-review">
                     <Star className="mr-2 h-5 w-5" />
