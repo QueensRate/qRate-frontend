@@ -35,6 +35,9 @@ const Index = () => {
             <Link to="/submit-review" className="text-gray-700 hover:text-blue-900 transition-colors">
               Submit Review
             </Link>
+            <Link to="/about" className="text-gray-700 hover:text-blue-900 transition-colors">
+              About
+            </Link>
             <Button variant="outline" className="border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white">
               Sign In
             </Button>
