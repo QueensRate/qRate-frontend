@@ -7,33 +7,33 @@ import { Link } from "react-router-dom";
 const developers = [
   {
     id: 1,
-    name: "John Smith",
-    graduationYear: "2024",
-    degree: "Computer Science",
+    name: "Nathan Daniel",
+    graduationYear: "2026",
+    degree: "Computer Engineering",
     description: "Full-stack developer passionate about creating user-friendly educational platforms. Led the frontend development and UI/UX design for qRate.",
     profileImage: "/placeholder.svg",
-    github: "https://github.com/johnsmith",
-    linkedin: "https://linkedin.com/in/johnsmith"
+    github: "https://github.com/nathanddaniel",
+    linkedin: "https://www.linkedin.com/in/nathan-daniel-nd/"
   },
   {
     id: 2,
-    name: "Sarah Johnson",
-    graduationYear: "2024",
-    degree: "Software Engineering",
+    name: "Lucas Srigley",
+    graduationYear: "2026",
+    degree: "Computer Engineering",
     description: "Backend specialist with expertise in database design and API development. Architected the course data management system for qRate.",
     profileImage: "/placeholder.svg",
-    github: "https://github.com/sarahjohnson",
-    linkedin: "https://linkedin.com/in/sarahjohnson"
+    github: "https://github.com/lucas-srigley",
+    linkedin: "https://www.linkedin.com/in/lucas-srigley/"
   },
   {
     id: 3,
-    name: "Mike Chen",
-    graduationYear: "2025",
-    degree: "Computer Science",
+    name: "Jamie Bell",
+    graduationYear: "2026",
+    degree: "Computer Engineering",
     description: "Data enthusiast and algorithm optimizer. Developed the rating and review aggregation system that powers qRate's course recommendations.",
     profileImage: "/placeholder.svg",
-    github: "https://github.com/mikechen",
-    linkedin: "https://linkedin.com/in/mikechen"
+    github: "https://github.com/jamiebell8bit",
+    linkedin: "https://www.linkedin.com/in/james-bell13/"
   }
 ];
 
@@ -116,6 +116,29 @@ const About = () => {
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <div className="text-2xl font-bold mb-4">qRate</div>
+            <p className="text-gray-400 mb-4">
+              Empowering students to make informed course decisions
+            </p>
+            <div className="flex justify-center space-x-6">
+              <Link to="/" className="text-gray-400 hover:text-white transition-colors">
+                Home
+              </Link>
+              <Link to="/browse" className="text-gray-400 hover:text-white transition-colors">
+                Browse
+              </Link>
+              <Link to="/about" className="text-gray-400 hover:text-white transition-colors">
+                About
+              </Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

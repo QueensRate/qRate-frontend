@@ -190,6 +190,29 @@ const BrowseCourses = () => {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <div className="text-2xl font-bold mb-4">qRate</div>
+            <p className="text-gray-400 mb-4">
+              Empowering students to make informed course decisions
+            </p>
+            <div className="flex justify-center space-x-6">
+              <Link to="/" className="text-gray-400 hover:text-white transition-colors">
+                Home
+              </Link>
+              <Link to="/browse" className="text-gray-400 hover:text-white transition-colors">
+                Browse
+              </Link>
+              <Link to="/about" className="text-gray-400 hover:text-white transition-colors">
+                About
+              </Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
