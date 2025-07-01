@@ -32,7 +32,7 @@ const BrowseCourses = () => {
   }, []);
 
 
-  const departments = ["Computing", "Electrical Engineering", "Mathematics", "Psychology", "Business", "Chemistry"];
+  const departments = ["Faculty of Arts and Science", "Smith School of Business", "Smith Engineering", "Faculty of Health Sciences", "Faculty of Education", "Faculty of Law"];
 
   const filteredCourses = courses.filter(course => {
     const matchesSearch = course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -141,7 +141,7 @@ const BrowseCourses = () => {
                     <div>
                       <h3 className="font-bold text-lg text-blue-900 mb-1">{course.code}</h3>
                       <h4 className="text-gray-700 font-medium mb-2">{course.name}</h4>
-                      <p className="text-sm text-gray-500">{course.instructor} • {course.department}</p>
+                      <p className="text-sm text-gray-500">{course.offering_faculty} • {course.title}</p>
                     </div>
                     <div className="text-right">
                       <div className="flex items-center space-x-1 mb-1">
@@ -151,6 +151,11 @@ const BrowseCourses = () => {
                       <div className="text-sm text-gray-500">{course.reviews} reviews</div>
                     </div>
                   </div>
+
+                  {/* NEW: Course Description */}
+                  {/* <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                    {course.description ?? "No description available."}
+                  </p> */}
 
                   {/* Rating Breakdown */}
                   <div className="grid grid-cols-3 gap-4 mb-4">
