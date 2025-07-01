@@ -1,82 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Star, ThumbsUp, ThumbsDown, ArrowLeft, Calendar, User, BookOpen } from "lucide-react";
+import axios from "axios";
 
 const CourseDetail = () => {
   const { id } = useParams();
+  const [course, setCourse] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [helpfulReviews, setHelpfulReviews] = useState<{ [key: number]: boolean }>({});
 
-  // Mock course data (in a real app, this would be fetched based on the ID)
-  const course = {
-    id: 1,
-    code: "COMP 102",
-    name: "Introduction to Computing",
-    department: "Computing",
-    credits: 3,
-    description: "An introduction to computer science and programming fundamentals using Python. Topics include data types, control structures, functions, and basic algorithms.",
-    ratings: {
-      overall: 4.2,
-      difficulty: 2.8,
-      usefulness: 4.5,
-      workload: 3.2,
-      teaching: 4.1
-    },
-    ratingDistribution: {
-      5: 45,
-      4: 32,
-      3: 15,
-      2: 6,
-      1: 2
-    },
-    totalReviews: 89,
-    tags: ["beginner-friendly", "programming", "python", "engaging"],
-    prerequisites: ["None"],
-    reviews: [
-      {
-        id: 1,
-        instructor: "Dr. Smith",
-        term: "Fall 2023",
-        rating: 5,
-        difficulty: 2,
-        usefulness: 5,
-        workload: 3,
-        comment: "Great introduction to programming! Dr. Smith explains concepts clearly and the assignments are well-structured. Perfect for beginners with no prior coding experience.",
-        helpful: 24,
-        notHelpful: 2,
-        date: "2023-12-15"
-      },
-      {
-        id: 2,
-        instructor: "Dr. Smith",
-        term: "Winter 2024",
-        rating: 4,
-        difficulty: 3,
-        usefulness: 4,
-        workload: 4,
-        comment: "Solid course overall. The pace can be a bit fast sometimes, but the material is very relevant. Make sure to stay on top of the weekly assignments.",
-        helpful: 18,
-        notHelpful: 1,
-        date: "2024-04-20"
-      },
-      {
-        id: 3,
-        instructor: "Prof. Johnson",
-        term: "Fall 2023",
-        rating: 3,
-        difficulty: 4,
-        usefulness: 4,
-        workload: 3,
-        comment: "Course content is good but Prof. Johnson's teaching style didn't click with me. Office hours were helpful though. Assignments are fair.",
-        helpful: 12,
-        notHelpful: 5,
-        date: "2023-12-10"
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8000/api/v1/courses/${id}`);
+        setCourse(res.data);
+      } catch (error) {
+        console.error("Error fetching course data:", error);
+      } finally {
+        setLoading(false);
       }
-    ]
-  };
+    };
+
+    fetchCourse();
+  }, [id]);
+
+  if (loading) return <div className="p-8 text-gray-600">Loading course details...</div>;
+  if (!course) return <div className="p-8 text-red-600">Course not found.</div>;
 
   const handleHelpfulVote = (reviewId: number, isHelpful: boolean) => {
     setHelpfulReviews(prev => ({
