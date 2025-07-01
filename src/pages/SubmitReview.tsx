@@ -53,7 +53,7 @@ const SubmitReview = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Basic validation
@@ -75,8 +75,35 @@ const SubmitReview = () => {
       return;
     }
 
-    // Here you would typically send the data to your backend
-    console.log("Submitting review:", formData);
+    try {
+      const response = await fetch("http://localhost:8000/api/v1/reviews/new", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          courseCode: formData.courseCode,
+          courseName: formData.courseName,
+          instructor: formData.instructor,
+          term: formData.term,
+          overallRating: formData.overallRating[0],
+          difficulty: formData.difficulty[0],
+          usefulness: formData.usefulness[0],
+          workload: formData.workload[0],
+          teaching: formData.teaching[0],
+          comment: formData.comment,
+          user: {
+            name: "Anonymous",
+            userId: "guest-123"
+          }
+        })        
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to submit review.");
+      }
     
     toast({
       title: "Review Submitted!",
@@ -96,6 +123,14 @@ const SubmitReview = () => {
       teaching: [4],
       comment: ""
     });
+  
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message || "Something went wrong.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getRatingLabel = (value: number, type: string) => {
