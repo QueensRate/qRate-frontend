@@ -138,15 +138,25 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-8">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="bg-blue-900 text-yellow-400 p-2 rounded-lg font-bold">qRate</div>
-            <span className="text-gray-400">for Queen's University</span>
+      <footer className="bg-gray-900 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <div className="text-2xl font-bold mb-4">qRate</div>
+            <p className="text-gray-400 mb-4">
+              Empowering students to make informed course decisions
+            </p>
+            <div className="flex justify-center space-x-6">
+              <Link to="/" className="text-gray-400 hover:text-white transition-colors">
+                Home
+              </Link>
+              <Link to="/browse" className="text-gray-400 hover:text-white transition-colors">
+                Browse
+              </Link>
+              <Link to="/about" className="text-gray-400 hover:text-white transition-colors">
+                About
+              </Link>
+            </div>
           </div>
-          <p className="text-gray-400 text-sm">
-            Built by students, for students. Making course selection easier since 2024.
-          </p>
         </div>
       </footer>
     </div>

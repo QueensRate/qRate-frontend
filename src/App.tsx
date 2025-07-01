@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import BrowseCourses from "./pages/BrowseCourses";
 import CourseDetail from "./pages/CourseDetail";
 import SubmitReview from "./pages/SubmitReview";
+import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/browse" element={<BrowseCourses />} />
           <Route path="/course/:id" element={<CourseDetail />} />
           <Route path="/submit-review" element={<SubmitReview />} />
+          <Route path="/about" element={<About />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
