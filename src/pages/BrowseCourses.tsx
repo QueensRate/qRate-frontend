@@ -141,7 +141,7 @@ const BrowseCourses = () => {
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                         <span className="font-semibold">{course.rating}</span>
                       </div>
-                      <div className="text-sm text-gray-500">{course.reviews} reviews</div>
+                      <div className="text-sm text-gray-500">{course.num_reviews} reviews</div>
                     </div>
                   </div>
 
