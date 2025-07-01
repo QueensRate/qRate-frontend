@@ -11,7 +11,7 @@ const developers = [
     graduationYear: "2026",
     degree: "Computer Engineering",
     description: "Full-stack developer passionate about creating user-friendly educational platforms. Led the frontend development and UI/UX design for qRate.",
-    profileImage: "/placeholder.svg",
+    profileImage: "../../assets/about/nathan_daniel.jpg",
     github: "https://github.com/nathanddaniel",
     linkedin: "https://www.linkedin.com/in/nathan-daniel-nd/"
   },
@@ -21,7 +21,7 @@ const developers = [
     graduationYear: "2026",
     degree: "Computer Engineering",
     description: "Backend specialist with expertise in database design and API development. Architected the course data management system for qRate.",
-    profileImage: "/placeholder.svg",
+    profileImage: "../../assets/about/lucas_srigley.jpg",
     github: "https://github.com/lucas-srigley",
     linkedin: "https://www.linkedin.com/in/lucas-srigley/"
   },
@@ -31,9 +31,19 @@ const developers = [
     graduationYear: "2026",
     degree: "Computer Engineering",
     description: "Data enthusiast and algorithm optimizer. Developed the rating and review aggregation system that powers qRate's course recommendations.",
-    profileImage: "/placeholder.svg",
+    profileImage: "../../assets/about/jamie_bell.jpg",
     github: "https://github.com/jamiebell8bit",
     linkedin: "https://www.linkedin.com/in/james-bell13/"
+  }, 
+  {
+    id: 4,
+    name: "Nolan Steed",
+    graduationYear: "2026",
+    degree: "Computer Engineering",
+    description: "Data enthusiast and algorithm optimizer. Developed the rating and review aggregation system that powers qRate's course recommendations.",
+    profileImage: "../../assets/about/nolan_steed.jpg",
+    github: "https://github.com/jamiebell8bit",
+    linkedin: "https://www.linkedin.com/in/nolan-steed/"
   }
 ];
 
