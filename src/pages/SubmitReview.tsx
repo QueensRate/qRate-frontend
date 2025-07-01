@@ -26,12 +26,14 @@ const SubmitReview = () => {
   });
 
   const terms = [
+    "Summer 2025",
+    "Winter 2025",
     "Fall 2024",
-    "Winter 2024",
     "Summer 2024",
+    "Winter 2024",
     "Fall 2023",
+    "Summer 2023",
     "Winter 2023",
-    "Summer 2023"
   ];
 
   const courseOptions = [
@@ -147,10 +149,10 @@ const SubmitReview = () => {
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2">
             <div className="bg-blue-900 text-yellow-400 p-2 rounded-lg font-bold text-xl">qRate</div>
             <span className="text-gray-600 text-sm">Queen's University</span>
-          </div>
+          </Link>
           <nav className="hidden md:flex items-center space-x-6">
             <Link to="/" className="text-gray-700 hover:text-blue-900 transition-colors">Home</Link>
             <Link to="/browse" className="text-gray-700 hover:text-blue-900 transition-colors">Browse Courses</Link>
