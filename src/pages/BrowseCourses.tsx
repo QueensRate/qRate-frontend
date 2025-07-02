@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, Search, Filter, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { Navbar } from "./Navbar";
 
 const BrowseCourses = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,21 +52,7 @@ const BrowseCourses = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="bg-blue-900 text-yellow-400 p-2 rounded-lg font-bold text-xl">qRate</div>
-            <span className="text-gray-600 text-sm">Queen's University</span>
-          </Link>
-          <nav className="hidden md:flex items-center space-x-6">
-            <Link to="/" className="text-gray-700 hover:text-blue-900 transition-colors">Home</Link>
-            <Link to="/submit-review" className="text-gray-700 hover:text-blue-900 transition-colors">Submit Review</Link>
-            <Link to="/about" className="text-gray-700 hover:text-blue-900 transition-colors">About</Link>
-            <Button variant="outline" className="border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white">Sign In</Button>
-          </nav>
-        </div>
-      </header>
+      <Navbar />
 
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
