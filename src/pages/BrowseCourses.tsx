@@ -115,7 +115,7 @@ const BrowseCourses = () => {
         {/* Course Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {filteredCourses.map((course) => (
-            <Link key={course.id} to={`/course/${course.id}`}>
+            <Link key={course._id} to={`/course/${course.id}`}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
@@ -156,8 +156,8 @@ const BrowseCourses = () => {
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2">
-                    {course.tags?.map((tag, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
+                    {course.tags?.map((tag: string) => (
+                      <Badge key={tag} variant="secondary" className="text-xs">
                         {tag}
                       </Badge>
                     ))}
