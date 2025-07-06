@@ -1,4 +1,3 @@
-
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -36,12 +35,14 @@ const CourseReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Course
   ];
 
   const terms = [
+    "Summer 2025",
+    "Winter 2025",
     "Fall 2024",
-    "Winter 2024",
     "Summer 2024",
+    "Winter 2024",
     "Fall 2023",
+    "Summer 2023",
     "Winter 2023",
-    "Summer 2023"
   ];
 
   const handleCourseSelect = (courseCode: string) => {
