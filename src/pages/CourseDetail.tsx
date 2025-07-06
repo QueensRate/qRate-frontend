@@ -99,6 +99,12 @@ const CourseDetail = () => {
             ))}
           </div>
 
+          { /* Course Description */}
+          <div className="text-sm">
+            <span className="font-medium text-gray-700">Course Learning Outcomes: </span>
+            <span className="text-gray-600">{course.clo || "None"}</span>
+          </div>
+
           {/* Prerequisites */}
           <div className="text-sm">
             <span className="font-medium text-gray-700">Prerequisites: </span>

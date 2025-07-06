@@ -12,7 +12,7 @@ const developers = [
     name: "Nathan Daniel",
     graduationYear: "2026",
     degree: "Computer Engineering",
-    description: "Full-stack developer passionate about creating user-friendly educational platforms. Led the frontend development and UI/UX design for qRate.",
+    description: "Hey everyone! A little bit about me, I'm obsessed with AI, full-stack development, and hardware architecture. I'm also a huge UFC fan so hit me up for anything MMA related!",
     profileImage: "../../assets/about/nathan_daniel.jpg",
     github: "https://github.com/nathanddaniel",
     linkedin: "https://www.linkedin.com/in/nathan-daniel-nd/"
