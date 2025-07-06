@@ -73,9 +73,9 @@ const CourseDetail = () => {
               <div className="flex items-center space-x-4 text-sm text-gray-600">
                 <span className="flex items-center">
                   <BookOpen className="h-4 w-4 mr-1" />
-                  {course.department}
+                  {course.offering_faculty}
                 </span>
-                <span>{course.credits} credits</span>
+                <span>{course.units} Units</span>
                 <span>{course.totalReviews} reviews</span>
               </div>
             </div>

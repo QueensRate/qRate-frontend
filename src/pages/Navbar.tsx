@@ -15,8 +15,11 @@ export const Navbar = () => {
           <span className="text-gray-600 text-sm">Queen's University</span>
         </NavLink>
         <nav className="hidden md:flex items-center space-x-6">
-          <NavLink to="/browse" className={linkClasses}>
+          <NavLink to="/browse-courses" className={linkClasses}>
             Browse Courses
+          </NavLink>
+          <NavLink to="/browse-profs" className={linkClasses}>
+            Browse Professors
           </NavLink>
           <NavLink to="/submit-review" className={linkClasses}>
             Submit Review
