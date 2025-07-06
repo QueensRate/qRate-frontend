@@ -186,7 +186,7 @@ const SubmitReview = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Back Navigation */}
         <Button variant="ghost" className="mb-6" asChild>
-          <Link to="/browse">
+          <Link to="/browse-courses">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Browse
           </Link>
