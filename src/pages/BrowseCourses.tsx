@@ -19,6 +19,22 @@ const BrowseCourses = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+  const fetchCourses = async () => {
+    try {
+      const res = await axios.get("http://localhost:8000/api/v1/courses");
+      console.log("API response:", res.data); // Log to inspect the structure
+      setCourses(Array.isArray(res.data) ? res.data : res.data.data || []); // Adjust based on API structure
+    } catch (error) {
+      console.error("Failed to fetch courses:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchCourses();
+}, []);
+
+  /* useEffect(() => {
     const fetchCourses = async () => {
       try {
         const res = await axios.get("http://localhost:8000/api/v1/courses");
@@ -33,23 +49,24 @@ const BrowseCourses = () => {
     fetchCourses();
   }, []);
 
-
+*/
   const departments = ["Faculty of Arts and Science", "Smith School of Business", "Smith Engineering", "Faculty of Health Sciences", "Faculty of Education", "Faculty of Law"];
 
-  const filteredCourses = courses.filter(course => {
-    const matchesSearch = course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.instructor.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesDepartment = !selectedDepartment || selectedDepartment === "all" || course.department === selectedDepartment;
-    
-    const matchesRating = !selectedRating || selectedRating === "all" ||
-                         (selectedRating === "4+" && course.rating >= 4) ||
-                         (selectedRating === "3+" && course.rating >= 3) ||
-                         (selectedRating === "2+" && course.rating >= 2);
-    
-    return matchesSearch && matchesDepartment && matchesRating;
-  });
+ const filteredCourses = courses.filter(course => {
+  const matchesSearch = 
+    (course.code || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (course.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (course.instructor || '').toLowerCase().includes(searchTerm.toLowerCase());
+  
+  const matchesDepartment = !selectedDepartment || selectedDepartment === "all" || course.department === selectedDepartment;
+  
+  const matchesRating = !selectedRating || selectedRating === "all" ||
+    (selectedRating === "4+" && course.rating >= 4) ||
+    (selectedRating === "3+" && course.rating >= 3) ||
+    (selectedRating === "2+" && course.rating >= 2);
+  
+  return matchesSearch && matchesDepartment && matchesRating;
+});
 
   return (
     <div className="min-h-screen bg-gray-50">
