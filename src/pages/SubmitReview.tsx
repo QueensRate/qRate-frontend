@@ -10,6 +10,7 @@ import { Slider } from "@/components/ui/slider";
 import { Star, ArrowLeft, BookOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Navbar } from "./Navbar";
+import Footer from "@/pages/Footer";
 
 const SubmitReview = () => {
   const { toast } = useToast();
@@ -394,6 +395,8 @@ const SubmitReview = () => {
           </Card>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };
