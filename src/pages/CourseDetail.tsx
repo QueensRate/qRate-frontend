@@ -58,7 +58,7 @@ const CourseDetail = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Back Navigation */}
         <Button variant="ghost" className="mb-6" asChild>
-          <Link to="/browse">
+          <Link to="/browse-courses">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Browse
           </Link>
@@ -70,6 +70,7 @@ const CourseDetail = () => {
             <div>
               <h1 className="text-4xl font-bold text-blue-900 mb-2">{course.code}</h1>
               <h2 className="text-2xl text-gray-700 mb-4">{course.name}</h2>
+              <h3 className="text-2xl text-gray-700 mb-4">{course.title} </h3>
               <div className="flex items-center space-x-4 text-sm text-gray-600">
                 <span className="flex items-center">
                   <BookOpen className="h-4 w-4 mr-1" />
@@ -92,102 +93,156 @@ const CourseDetail = () => {
 
           <p className="text-gray-700 mb-6">{course.description}</p>
 
-          {/* Tags */}
+          {/* Tags
           <div className="flex flex-wrap gap-2 mb-6">
             {(course.tags || []).map((tag: string, index: number) => (
               <Badge key={index} variant="secondary">{tag}</Badge>
             ))}
-          </div>
+          </div> */}
 
-          { /* Course Description */}
-          <div className="text-sm">
-            <span className="font-medium text-gray-700">Course Learning Outcomes: </span>
-            <span className="text-gray-600">{course.clo || "None"}</span>
-          </div>
+          {/* Course Metadata */}
+          <div className="space-y-2 text-sm">
 
-          {/* Prerequisites */}
-          <div className="text-sm">
-            <span className="font-medium text-gray-700">Prerequisites: </span>
-            <span className="text-gray-600">{course.prerequisites || "None"}</span>
+            <div>
+              <span className="font-medium text-gray-700">Professor: </span>
+              <span className="text-gray-600">{course.professor || "None"}</span>
+            </div>
+
+            <div>
+              <span className="font-medium text-gray-700">Course Weekly Breakdown: </span>
+              <span className="text-gray-600">{course.hourly_breakdown || "None"}</span>
+            </div>
+
+            <div>
+              <span className="font-medium text-gray-700">Offering Term: </span>
+              <span className="text-gray-600">{course.offering_term || "None"}</span>
+            </div>
+
+            <div>
+              <span className="font-medium text-gray-700">Prerequisites: </span>
+              <span className="text-gray-600 whitespace-pre-line">{course.prerequisites || "None"}</span>
+            </div>
+
+            <div>
+              <span className="font-medium text-gray-700">Corequisites: </span>
+              <span className="text-gray-600 whitespace-pre-line">{course.corequisites || "None"}</span>
+            </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
           {/* Ratings Overview */}
           <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle>Ratings Overview</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Overall Rating */}
-                <div className="text-center pb-4 border-b">
-                  <div className="text-5xl font-bold text-blue-900 mb-2">{course.ratings?.overall ?? "N/A"}</div>
-                  <div className="flex justify-center mb-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={`h-5 w-5 ${star <= Math.round(course.ratings.overall) 
-                          ? 'fill-yellow-400 text-yellow-400' 
-                          : 'text-gray-300'}`}
-                      />
-                    ))}
+            <div className="flex flex-col space-y-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Ratings Overview</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Overall Rating */}
+                  <div className="text-center pb-4 border-b">
+                    <div className="text-5xl font-bold text-blue-900 mb-2">{course.ratings?.overall ?? "N/A"}</div>
+                    <div className="flex justify-center mb-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <Star
+                          key={star}
+                          className={`h-5 w-5 ${star <= Math.round(course.ratings.overall) 
+                            ? 'fill-yellow-400 text-yellow-400' 
+                            : 'text-gray-300'}`}
+                        />
+                      ))}
+                    </div>
+                    <div className="text-sm text-gray-600">{course.totalReviews} total ratings</div>
                   </div>
-                  <div className="text-sm text-gray-600">{course.totalReviews} total ratings</div>
-                </div>
 
-                {/* Rating Categories */}
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Difficulty</span>
-                    <span className={`font-bold ${getDifficultyColor(course.ratings.difficulty)}`}>
-                      {course.ratings.difficulty}/5
-                    </span>
+                  {/* Rating Categories */}
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium">Difficulty</span>
+                      <span className={`font-bold ${getDifficultyColor(course.ratings.difficulty)}`}>
+                        {course.ratings.difficulty}/5
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium">Usefulness</span>
+                      <span className={`font-bold ${getRatingColor(course.ratings.usefulness)}`}>
+                        {course.ratings.usefulness}/5
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium">Workload</span>
+                      <span className={`font-bold ${getDifficultyColor(course.ratings.workload)}`}>
+                        {course.ratings.workload}/5
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium">Teaching Quality</span>
+                      <span className={`font-bold ${getRatingColor(course.ratings.teaching)}`}>
+                        {course.ratings.teaching}/5
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Usefulness</span>
-                    <span className={`font-bold ${getRatingColor(course.ratings.usefulness)}`}>
-                      {course.ratings.usefulness}/5
-                    </span>
+
+                  {/* Rating Distribution
+
+                  const ratingDistribution = course.ratingDistribution || { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+                  const totalReviews = course.totalReviews || 0;
+
+                  <div className="pt-4 border-t">
+                    <h4 className="font-medium mb-3">Rating Distribution</h4>
+                    {[5, 4, 3, 2, 1].map((rating) => {
+                      const count = ratingDistribution[rating as keyof typeof ratingDistribution];
+                      const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
+
+                      return (
+                        <div key={rating} className="flex items-center space-x-2 mb-2">
+                          <span className="text-sm w-4">{rating}</span>
+                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                          <Progress value={percentage} className="flex-1 h-2" />
+                          <span className="text-sm text-gray-500 w-8">{count}</span>
+                        </div>
+                      );
+                    })}
+                  </div> */}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Additional Course Info</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4 text-sm text-gray-700">
+                  
+                  {/* Learning Outcomes */}
+                  <div>
+                    <h4 className="font-bold text-gray-800 mb-1">Course Learning Outcomes (CLO)</h4>
+                    <p className="whitespace-pre-line">{course.clo || "Not available."}</p>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Workload</span>
-                    <span className={`font-bold ${getDifficultyColor(course.ratings.workload)}`}>
-                      {course.ratings.workload}/5
-                    </span>
+
+                  {/* CEAB Units */}
+                  <div>
+                    <h4 className="font-bold text-gray-800 mb-1">CEAB Units</h4>
+                    <p className="whitespace-pre-line">{course.CEAB || "Not specified."}</p>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Teaching Quality</span>
-                    <span className={`font-bold ${getRatingColor(course.ratings.teaching)}`}>
-                      {course.ratings.teaching}/5
-                    </span>
+
+                  {/* Professors Teaching */}
+                  <div>
+                    <h4 className="font-bold text-gray-800 mb-1">Professor(s) Teaching</h4>
+                    <p>{course.professor || "TBD"}</p>
                   </div>
-                </div>
 
-                {/* Rating Distribution
-
-                const ratingDistribution = course.ratingDistribution || { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-                const totalReviews = course.totalReviews || 0;
-
-                <div className="pt-4 border-t">
-                  <h4 className="font-medium mb-3">Rating Distribution</h4>
-                  {[5, 4, 3, 2, 1].map((rating) => {
-                    const count = ratingDistribution[rating as keyof typeof ratingDistribution];
-                    const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
-
-                    return (
-                      <div key={rating} className="flex items-center space-x-2 mb-2">
-                        <span className="text-sm w-4">{rating}</span>
-                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                        <Progress value={percentage} className="flex-1 h-2" />
-                        <span className="text-sm text-gray-500 w-8">{count}</span>
-                      </div>
-                    );
-                  })}
-                </div> */}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </div>
+
+          {/* Additional Course Info
+          <div className="lg:col-span-1">
+            
+          </div> */}
+
+          
 
           {/* Reviews */}
           <div className="lg:col-span-2">

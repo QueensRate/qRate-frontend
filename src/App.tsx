@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import BrowseCourses from "./pages/BrowseCourses";
 import BrowseProfessors from "./pages/BrowseProfessors";
 import CourseDetail from "./pages/CourseDetail";
+import ProfessorDetail from "./pages/ProfessorDetail";
 import SubmitReview from "./pages/SubmitReview";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/browse-courses" element={<BrowseCourses />} />
           <Route path="/browse-profs" element={<BrowseProfessors />} />
           <Route path="/course/:id" element={<CourseDetail />} />
+          <Route path="/professor/:id" element={<ProfessorDetail />} />
           <Route path="/submit-review" element={<SubmitReview />} />
           <Route path="/about" element={<About />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

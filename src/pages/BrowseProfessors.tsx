@@ -6,9 +6,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Star, Search, Filter, User } from "lucide-react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { Navbar } from "./Navbar";
-import Footer from "./Footer";
+import axios from "axios";
+
 
 const BrowseProfessors = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,6 +21,7 @@ const BrowseProfessors = () => {
   useEffect(() => {
     const fetchProfessors = async () => {
       try {
+        // Mock data for professors - in real app this would come from API
         const mockProfessors = [
           {
             id: 1,
@@ -125,6 +126,7 @@ const BrowseProfessors = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Navigation Bar */}
       <Navbar/>
 
       <div className="container mx-auto px-4 py-8">
@@ -187,51 +189,53 @@ const BrowseProfessors = () => {
         {/* Professor Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {filteredProfessors.map((professor) => (
-            <Card key={professor.id} className="hover:shadow-lg transition-shadow cursor-pointer h-full">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="font-bold text-lg text-blue-900 mb-1">{professor.name}</h3>
-                    <p className="text-sm text-gray-500 mb-2">{professor.department}</p>
-                    <p className="text-sm text-gray-600">
-                      Courses: {professor.courses.join(", ")}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center space-x-1 mb-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold">{professor.rating}</span>
+            <Link key={professor.id} to={`/professor/${professor.id}`}>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="font-bold text-lg text-blue-900 mb-1">{professor.name}</h3>
+                      <p className="text-sm text-gray-500 mb-2">{professor.department}</p>
+                      <p className="text-sm text-gray-600">
+                        Courses: {professor.courses.join(", ")}
+                      </p>
                     </div>
-                    <div className="text-sm text-gray-500">{professor.reviews} reviews</div>
+                    <div className="text-right">
+                      <div className="flex items-center space-x-1 mb-1">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="font-semibold">{professor.rating}</span>
+                      </div>
+                      <div className="text-sm text-gray-500">{professor.reviews} reviews</div>
+                    </div>
                   </div>
-                </div>
 
-                {/* Rating Breakdown */}
-                <div className="grid grid-cols-3 gap-4 mb-4">
-                  <div className="text-center">
-                    <div className="text-sm font-medium text-gray-700">Difficulty</div>
-                    <div className="text-lg font-bold text-orange-500">{professor.difficulty}</div>
+                  {/* Rating Breakdown */}
+                  <div className="grid grid-cols-3 gap-4 mb-4">
+                    <div className="text-center">
+                      <div className="text-sm font-medium text-gray-700">Difficulty</div>
+                      <div className="text-lg font-bold text-orange-500">{professor.difficulty}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm font-medium text-gray-700">Helpfulness</div>
+                      <div className="text-lg font-bold text-green-500">{professor.helpfulness}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-sm font-medium text-gray-700">Clarity</div>
+                      <div className="text-lg font-bold text-purple-500">{professor.clarity}</div>
+                    </div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-sm font-medium text-gray-700">Helpfulness</div>
-                    <div className="text-lg font-bold text-green-500">{professor.helpfulness}</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-sm font-medium text-gray-700">Clarity</div>
-                    <div className="text-lg font-bold text-purple-500">{professor.clarity}</div>
-                  </div>
-                </div>
 
-                {/* Tags */}
-                <div className="flex flex-wrap gap-2">
-                  {professor.tags?.map((tag, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2">
+                    {professor.tags?.map((tag, index) => (
+                      <Badge key={index} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
 
@@ -243,8 +247,6 @@ const BrowseProfessors = () => {
           </div>
         )}
       </div>
-
-      <Footer />
     </div>
   );
 };
