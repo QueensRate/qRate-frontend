@@ -8,7 +8,7 @@ import { Star, Search, Filter, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { Navbar } from "./Navbar";
-import Footer from "@/pages/Footer";
+import Footer from "./Footer";
 
 const BrowseCourses = () => {
   const [searchTerm, setSearchTerm] = useState("");
