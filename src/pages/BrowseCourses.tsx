@@ -115,7 +115,7 @@ const BrowseCourses = () => {
         {/* Course Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {filteredCourses.map((course) => (
-            <Link key={course._id} to={`/course/${course.id}`}>
+            <Link key={course._id} to={`/course/${course._id}`}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
@@ -132,11 +132,6 @@ const BrowseCourses = () => {
                       <div className="text-sm text-gray-500">{course.num_reviews} reviews</div>
                     </div>
                   </div>
-
-                  {/* NEW: Course Description */}
-                  {/* <p className="text-sm text-gray-600 mb-4 line-clamp-3">
-                    {course.description ?? "No description available."}
-                  </p> */}
 
                   {/* Rating Breakdown */}
                   <div className="grid grid-cols-3 gap-4 mb-4">

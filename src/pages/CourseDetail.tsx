@@ -94,7 +94,7 @@ const CourseDetail = () => {
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-6">
-            {course.tags.map((tag, index) => (
+            {(course.tags || []).map((tag: string, index: number) => (
               <Badge key={index} variant="secondary">{tag}</Badge>
             ))}
           </div>
@@ -102,7 +102,7 @@ const CourseDetail = () => {
           {/* Prerequisites */}
           <div className="text-sm">
             <span className="font-medium text-gray-700">Prerequisites: </span>
-            <span className="text-gray-600">{course.prerequisites.join(", ")}</span>
+            <span className="text-gray-600">{course.prerequisites || "None"}</span>
           </div>
         </div>
 
@@ -116,7 +116,7 @@ const CourseDetail = () => {
               <CardContent className="space-y-4">
                 {/* Overall Rating */}
                 <div className="text-center pb-4 border-b">
-                  <div className="text-5xl font-bold text-blue-900 mb-2">{course.ratings.overall}</div>
+                  <div className="text-5xl font-bold text-blue-900 mb-2">{course.ratings?.overall ?? "N/A"}</div>
                   <div className="flex justify-center mb-2">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star
@@ -158,23 +158,27 @@ const CourseDetail = () => {
                   </div>
                 </div>
 
-                {/* Rating Distribution */}
+                {/* Rating Distribution
+
+                const ratingDistribution = course.ratingDistribution || { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+                const totalReviews = course.totalReviews || 0;
+
                 <div className="pt-4 border-t">
                   <h4 className="font-medium mb-3">Rating Distribution</h4>
-                  {[5, 4, 3, 2, 1].map((rating) => (
-                    <div key={rating} className="flex items-center space-x-2 mb-2">
-                      <span className="text-sm w-4">{rating}</span>
-                      <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                      <Progress 
-                        value={(course.ratingDistribution[rating as keyof typeof course.ratingDistribution] / course.totalReviews) * 100} 
-                        className="flex-1 h-2" 
-                      />
-                      <span className="text-sm text-gray-500 w-8">
-                        {course.ratingDistribution[rating as keyof typeof course.ratingDistribution]}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                  {[5, 4, 3, 2, 1].map((rating) => {
+                    const count = ratingDistribution[rating as keyof typeof ratingDistribution];
+                    const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
+
+                    return (
+                      <div key={rating} className="flex items-center space-x-2 mb-2">
+                        <span className="text-sm w-4">{rating}</span>
+                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                        <Progress value={percentage} className="flex-1 h-2" />
+                        <span className="text-sm text-gray-500 w-8">{count}</span>
+                      </div>
+                    );
+                  })}
+                </div> */}
               </CardContent>
             </Card>
           </div>
@@ -187,7 +191,7 @@ const CourseDetail = () => {
             </div>
 
             <div className="space-y-6">
-              {course.reviews.map((review) => (
+              {(course.reviews || []).map((review) => (
                 <Card key={review.id}>
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-4">
