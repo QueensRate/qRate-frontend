@@ -62,7 +62,7 @@ const Index = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button asChild size="lg" className="bg-yellow-400 hover:bg-yellow-300 text-blue-900 px-8 py-3">
-                <Link to="/browse">
+                <Link to="/browse-courses">
                     <Search className="mr-2 h-5 w-5" />
                     Browse Courses
                 </Link>
