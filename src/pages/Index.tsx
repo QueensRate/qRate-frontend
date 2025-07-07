@@ -2,12 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star, Search, Users, BookOpen, TrendingUp, Quote } from "lucide-react";
 import { Link } from "react-router-dom";
-import heroImage from "../../assets/queens-backdrop.jpg";
 import { Navbar } from "./Navbar";
+import heroImage from "../../assets/queens-backdrop.jpg";
 import Footer from "./Footer";
+import TypingHeadline from "@/components/TypingHeadline";
 
 
 const Index = () => {
+
   const featuredCourses = [
     { code: "COMP 102", name: "Introduction to Computing", rating: 4.2, reviews: 89 },
     { code: "ELEC 221", name: "Electric Circuits", rating: 3.8, reviews: 67 },
@@ -54,9 +56,7 @@ const Index = () => {
 
         <div className="relative z-10 container mx-auto px-4 text-center text-white">
             <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold mb-6">
-                Find the <span className="text-yellow-400">Perfect Course</span>
-            </h1>
+            <TypingHeadline />
             <p className="text-xl mb-8 max-w-2xl mx-auto">
                 Read trusted reviews from Queen's students. Make informed decisions about your academic journey with qRate.
             </p>
