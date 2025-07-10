@@ -24,7 +24,7 @@ interface ProfessorReviewFormProps {
 
 const ProfessorReviewForm = ({ formData, onFormDataChange, getRatingLabel }: ProfessorReviewFormProps) => {
   const professors = [
-    "Dr. Sarah Johnson",
+    "Naraig Manjikian",
     "Prof. Michael Chen", 
     "Dr. Emily Rodriguez",
     "Prof. David Thompson",

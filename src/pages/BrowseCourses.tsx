@@ -34,25 +34,9 @@ const BrowseCourses = () => {
   fetchCourses();
 }, []);
 
-  /* useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const res = await axios.get("http://localhost:8000/api/v1/courses");
-        setCourses(res.data);
-      } catch (error) {
-        console.error("Failed to fetch courses:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+const departments = ["Faculty of Arts and Science", "Smith School of Business", "Smith Engineering", "Faculty of Health Sciences", "Faculty of Education", "Faculty of Law"];
 
-    fetchCourses();
-  }, []);
-
-*/
-  const departments = ["Faculty of Arts and Science", "Smith School of Business", "Smith Engineering", "Faculty of Health Sciences", "Faculty of Education", "Faculty of Law"];
-
- const filteredCourses = courses.filter(course => {
+const filteredCourses = courses.filter(course => {
   const matchesSearch = 
     (course.code || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (course.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||

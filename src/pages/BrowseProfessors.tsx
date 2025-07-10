@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -21,89 +20,16 @@ const BrowseProfessors = () => {
   useEffect(() => {
     const fetchProfessors = async () => {
       try {
-        // Mock data for professors - in real app this would come from API
-        const mockProfessors = [
-          {
-            id: 1,
-            name: "Dr. Sarah Johnson",
-            department: "Computing",
-            rating: 4.5,
-            reviews: 124,
-            difficulty: 3.2,
-            helpfulness: 4.7,
-            clarity: 4.3,
-            tags: ["Helpful", "Clear Explanations", "Fair Grading"],
-            courses: ["COMP 102", "COMP 202"]
-          },
-          {
-            id: 2,
-            name: "Prof. Michael Chen",
-            department: "Electrical Engineering",
-            rating: 4.2,
-            reviews: 89,
-            difficulty: 3.8,
-            helpfulness: 4.1,
-            clarity: 4.0,
-            tags: ["Challenging", "Knowledgeable", "Research Focused"],
-            courses: ["ELEC 221", "ELEC 224"]
-          },
-          {
-            id: 3,
-            name: "Dr. Emily Rodriguez",
-            department: "Mathematics",
-            rating: 4.8,
-            reviews: 156,
-            difficulty: 3.5,
-            helpfulness: 4.9,
-            clarity: 4.7,
-            tags: ["Amazing Teacher", "Patient", "Office Hours"],
-            courses: ["MATH 120", "MATH 121"]
-          },
-          {
-            id: 4,
-            name: "Prof. David Thompson",
-            department: "Psychology",
-            rating: 3.9,
-            reviews: 73,
-            difficulty: 2.8,
-            helpfulness: 4.2,
-            clarity: 3.7,
-            tags: ["Engaging", "Easy Going", "Interesting"],
-            courses: ["PSYC 100", "PSYC 200"]
-          },
-          {
-            id: 5,
-            name: "Dr. Lisa Wang",
-            department: "Business",
-            rating: 4.4,
-            reviews: 98,
-            difficulty: 3.1,
-            helpfulness: 4.5,
-            clarity: 4.2,
-            tags: ["Practical", "Industry Experience", "Networking"],
-            courses: ["BUSI 200", "BUSI 300"]
-          },
-          {
-            id: 6,
-            name: "Prof. Robert Davis",
-            department: "Chemistry",
-            rating: 4.1,
-            reviews: 67,
-            difficulty: 4.2,
-            helpfulness: 3.8,
-            clarity: 3.9,
-            tags: ["Tough but Fair", "Lab Intensive", "Detailed"],
-            courses: ["CHEM 112", "CHEM 200"]
-          }
-        ];
-        setProfessors(mockProfessors);
+        const res = await axios.get("http://localhost:8000/api/v1/professors");
+        console.log("API response:", res.data); // Log to inspect the structure
+        setProfessors(Array.isArray(res.data) ? res.data : res.data.data || []); // Adjust based on API structure
       } catch (error) {
-        console.error("Failed to fetch professors:", error);
+        console.error("Failed to fetch courses:", error);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchProfessors();
   }, []);
 
@@ -189,7 +115,7 @@ const BrowseProfessors = () => {
         {/* Professor Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {filteredProfessors.map((professor) => (
-            <Link key={professor.id} to={`/professor/${professor.id}`}>
+            <Link key={professor.id} to={`/professor/${professor.name}`}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
@@ -197,7 +123,7 @@ const BrowseProfessors = () => {
                       <h3 className="font-bold text-lg text-blue-900 mb-1">{professor.name}</h3>
                       <p className="text-sm text-gray-500 mb-2">{professor.department}</p>
                       <p className="text-sm text-gray-600">
-                        Courses: {professor.courses.join(", ")}
+                        Courses: {(professor.courses ?? []).join(", ")}
                       </p>
                     </div>
                     <div className="text-right">
