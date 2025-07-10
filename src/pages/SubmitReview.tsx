@@ -154,28 +154,61 @@ const SubmitReview = () => {
         return;
       }
 
-      // For now, just show success toast for professor reviews
-      // You can add the actual API call here when your backend supports professor reviews
-      console.log("Submitting professor review:", professorFormData);
+      try {
+        const response = await fetch("http://localhost:8000/api/v1/professors/new", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            professorName: professorFormData.professorName,
+            department: professorFormData.department,
+            courseCode: professorFormData.courseCode,
+            term: professorFormData.term,
+            overallRating: professorFormData.overallRating[0],
+            difficulty: professorFormData.difficulty[0],
+            helpfulness: professorFormData.helpfulness[0],
+            clarity: professorFormData.clarity[0],
+            wouldTakeAgain: professorFormData.wouldTakeAgain[0],
+            comment: professorFormData.comment,
+            user: {
+              name: "Anonymous",
+              userId: "guest-123"
+            }
+          })
+        });
       
-      toast({
-        title: "Review Submitted!",
-        description: "Thank you for your professor review. Your feedback will help other students.",
-      });
-
-      // Reset professor form
-      setProfessorFormData({
-        professorName: "",
-        department: "",
-        courseCode: "",
-        term: "",
-        overallRating: [4],
-        difficulty: [3],
-        helpfulness: [4],
-        clarity: [4],
-        wouldTakeAgain: [1],
-        comment: ""
-      });
+        const data = await response.json();
+      
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to submit professor review.");
+        }
+      
+        toast({
+          title: "Review Submitted!",
+          description: "Thank you for your professor review. Your feedback will help other students.",
+        });
+      
+        setProfessorFormData({
+          professorName: "",
+          department: "",
+          courseCode: "",
+          term: "",
+          overallRating: [4],
+          difficulty: [3],
+          helpfulness: [4],
+          clarity: [4],
+          wouldTakeAgain: [1],
+          comment: ""
+        });
+      
+      } catch (err: any) {
+        toast({
+          title: "Error",
+          description: err.message || "Something went wrong.",
+          variant: "destructive"
+        });
+      }      
     }
   };
 
