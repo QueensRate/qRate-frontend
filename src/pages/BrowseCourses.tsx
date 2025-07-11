@@ -22,8 +22,8 @@ const BrowseCourses = () => {
   const fetchCourses = async () => {
     try {
       const res = await axios.get("http://localhost:8000/api/v1/courses");
-      console.log("API response:", res.data); // Log to inspect the structure
-      setCourses(Array.isArray(res.data) ? res.data : res.data.data || []); // Adjust based on API structure
+      console.log("API response:", res.data); 
+      setCourses(Array.isArray(res.data) ? res.data : res.data.data || []); 
     } catch (error) {
       console.error("Failed to fetch courses:", error);
     } finally {
@@ -42,7 +42,11 @@ const filteredCourses = courses.filter(course => {
     (course.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
     (course.instructor || '').toLowerCase().includes(searchTerm.toLowerCase());
   
-  const matchesDepartment = !selectedDepartment || selectedDepartment === "all" || course.department === selectedDepartment;
+  const matchesDepartment =
+    !selectedDepartment ||
+    selectedDepartment === "all" ||
+    course.offering_faculty?.toLowerCase().trim() === selectedDepartment.toLowerCase().trim();
+
   
   const matchesRating = !selectedRating || selectedRating === "all" ||
     (selectedRating === "4+" && course.rating >= 4) ||
@@ -70,7 +74,7 @@ const filteredCourses = courses.filter(course => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
-                  placeholder="Search by course code, name, or instructor..."
+                  placeholder="Search by course code or name"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
