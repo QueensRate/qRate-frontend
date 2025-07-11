@@ -18,20 +18,56 @@ const BrowseProfessors = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProfessors = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/v1/professors");
-        console.log("API response:", res.data); 
-        setProfessors(Array.isArray(res.data) ? res.data : res.data.data || []); 
+        setLoading(true);
+  
+        const profRes = await axios.get("http://localhost:8000/api/v1/professors");
+        const professorList = Array.isArray(profRes.data) ? profRes.data : [];
+  
+        const enriched = await Promise.all(
+          professorList.map(async (prof) => {
+            try {
+              const encodedName = encodeURIComponent(prof.name);
+              const res = await axios.get(`http://localhost:8000/api/v1/professor-reviews/search?name=${encodedName}`);
+              const reviews = Array.isArray(res.data) ? res.data : [];
+              const total = reviews.length;
+  
+              const avg = (key: string) =>
+                total === 0
+                  ? 0
+                  : parseFloat(
+                      (
+                        reviews.reduce((sum, r) => sum + (r.review?.[key] || 0), 0) / total
+                      ).toFixed(1)
+                    );
+  
+              return {
+                ...prof,
+                rating: avg("overallRating"),
+                difficulty: avg("difficulty"),
+                helpfulness: avg("helpfulness"),
+                clarity: avg("clarity"),
+                reviews: total,
+                tags: ["Helpful", "Engaging", "Clear"] // Optional placeholder
+              };
+            } catch (err) {
+              console.warn(`Failed to fetch reviews for ${prof.name}`, err);
+              return { ...prof, rating: 0, reviews: 0 };
+            }
+          })
+        );
+  
+        setProfessors(enriched);
       } catch (error) {
-        console.error("Failed to fetch courses:", error);
+        console.error("Failed to fetch professors or reviews:", error);
       } finally {
         setLoading(false);
       }
     };
   
-    fetchProfessors();
-  }, []);
+    fetchData();
+  }, []);  
 
   const departments = ["Faculty of Arts and Science", "Mechanical and Materials Engineering", "Electrical and Computer Engineering", "Smith School of Business", "Smith Engineering", "Faculty of Health Sciences", "Faculty of Education", "Faculty of Law"];
 
