@@ -1,6 +1,13 @@
+import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 import RatingSlider from "./RatingSlider";
 
 interface ProfessorFormData {
@@ -22,17 +29,21 @@ interface ProfessorReviewFormProps {
   getRatingLabel: (value: number, type: string) => string;
 }
 
-const ProfessorReviewForm = ({ formData, onFormDataChange, getRatingLabel }: ProfessorReviewFormProps) => {
-  const professors = [
-    "Naraig Manjikian",
-    "Prof. Michael Chen", 
-    "Dr. Emily Rodriguez",
-    "Prof. David Thompson",
-    "Dr. Lisa Wang",
-    "Prof. Robert Davis"
-  ];
+const ProfessorReviewForm = ({
+  formData,
+  onFormDataChange,
+  getRatingLabel
+}: ProfessorReviewFormProps) => {
+  const [professorList, setProfessorList] = useState<string[]>([]);
 
-  const departments = ["Computing", "Electrical Engineering", "Mathematics", "Psychology", "Business", "Chemistry"];
+  const departments = [
+    "Computing",
+    "Electrical Engineering",
+    "Mathematics",
+    "Psychology",
+    "Business",
+    "Chemistry"
+  ];
 
   const courseOptions = [
     { code: "COMP 102", name: "Introduction to Computing" },
@@ -53,18 +64,44 @@ const ProfessorReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Pro
     "Summer 2023"
   ];
 
+  useEffect(() => {
+    const fetchProfessors = async () => {
+      try {
+        const res = await fetch("http://localhost:8000/api/v1/professors");
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          const names = data.map((p: any) => p.name);
+          setProfessorList(names);
+        }
+      } catch (err) {
+        console.error("Failed to fetch professors", err);
+      }
+    };
+
+    fetchProfessors();
+  }, []);
+
   return (
     <>
       {/* Professor Selection */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="professorName">Professor Name *</Label>
-          <Select value={formData.professorName} onValueChange={(value) => onFormDataChange({ ...formData, professorName: value })}>
+          <Select
+            value={formData.professorName}
+            onValueChange={(value) =>
+              onFormDataChange({ ...formData, professorName: value })
+            }
+          >
             <SelectTrigger>
-              <SelectValue placeholder="Select a professor" />
+              <SelectValue
+                placeholder={
+                  professorList.length ? "Select a professor" : "Loading..."
+                }
+              />
             </SelectTrigger>
             <SelectContent>
-              {professors.map(prof => (
+              {professorList.map((prof) => (
                 <SelectItem key={prof} value={prof}>
                   {prof}
                 </SelectItem>
@@ -74,13 +111,20 @@ const ProfessorReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Pro
         </div>
         <div>
           <Label htmlFor="department">Department *</Label>
-          <Select value={formData.department} onValueChange={(value) => onFormDataChange({ ...formData, department: value })}>
+          <Select
+            value={formData.department}
+            onValueChange={(value) =>
+              onFormDataChange({ ...formData, department: value })
+            }
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select department" />
             </SelectTrigger>
             <SelectContent>
-              {departments.map(dept => (
-                <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+              {departments.map((dept) => (
+                <SelectItem key={dept} value={dept}>
+                  {dept}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -91,12 +135,17 @@ const ProfessorReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Pro
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="courseCode">Course Code (Optional)</Label>
-          <Select value={formData.courseCode} onValueChange={(value) => onFormDataChange({ ...formData, courseCode: value })}>
+          <Select
+            value={formData.courseCode}
+            onValueChange={(value) =>
+              onFormDataChange({ ...formData, courseCode: value })
+            }
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select course (optional)" />
             </SelectTrigger>
             <SelectContent>
-              {courseOptions.map(course => (
+              {courseOptions.map((course) => (
                 <SelectItem key={course.code} value={course.code}>
                   {course.code}
                 </SelectItem>
@@ -106,13 +155,20 @@ const ProfessorReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Pro
         </div>
         <div>
           <Label htmlFor="term">Term Taken *</Label>
-          <Select value={formData.term} onValueChange={(value) => onFormDataChange({ ...formData, term: value })}>
+          <Select
+            value={formData.term}
+            onValueChange={(value) =>
+              onFormDataChange({ ...formData, term: value })
+            }
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select term" />
             </SelectTrigger>
             <SelectContent>
-              {terms.map(term => (
-                <SelectItem key={term} value={term}>{term}</SelectItem>
+              {terms.map((term) => (
+                <SelectItem key={term} value={term}>
+                  {term}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -122,11 +178,13 @@ const ProfessorReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Pro
       {/* Professor Ratings */}
       <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
         <h3 className="font-semibold text-lg">Rate This Professor</h3>
-        
+
         <RatingSlider
           label="Overall Rating"
           value={formData.overallRating}
-          onValueChange={(value) => onFormDataChange({ ...formData, overallRating: value })}
+          onValueChange={(value) =>
+            onFormDataChange({ ...formData, overallRating: value })
+          }
           getRatingLabel={getRatingLabel}
           type="overall"
         />
@@ -134,7 +192,9 @@ const ProfessorReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Pro
         <RatingSlider
           label="Difficulty Level"
           value={formData.difficulty}
-          onValueChange={(value) => onFormDataChange({ ...formData, difficulty: value })}
+          onValueChange={(value) =>
+            onFormDataChange({ ...formData, difficulty: value })
+          }
           getRatingLabel={getRatingLabel}
           type="difficulty"
           leftLabel="Very Easy"
@@ -144,7 +204,9 @@ const ProfessorReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Pro
         <RatingSlider
           label="Helpfulness"
           value={formData.helpfulness}
-          onValueChange={(value) => onFormDataChange({ ...formData, helpfulness: value })}
+          onValueChange={(value) =>
+            onFormDataChange({ ...formData, helpfulness: value })
+          }
           getRatingLabel={getRatingLabel}
           type="helpfulness"
           leftLabel="Not Helpful"
@@ -154,7 +216,9 @@ const ProfessorReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Pro
         <RatingSlider
           label="Clarity"
           value={formData.clarity}
-          onValueChange={(value) => onFormDataChange({ ...formData, clarity: value })}
+          onValueChange={(value) =>
+            onFormDataChange({ ...formData, clarity: value })
+          }
           getRatingLabel={getRatingLabel}
           type="clarity"
           leftLabel="Unclear"
@@ -164,7 +228,9 @@ const ProfessorReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Pro
         <RatingSlider
           label="Would Take Again?"
           value={formData.wouldTakeAgain}
-          onValueChange={(value) => onFormDataChange({ ...formData, wouldTakeAgain: value })}
+          onValueChange={(value) =>
+            onFormDataChange({ ...formData, wouldTakeAgain: value })
+          }
           min={0}
           max={1}
           getRatingLabel={getRatingLabel}
@@ -185,7 +251,9 @@ const ProfessorReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Pro
         <Textarea
           id="comment"
           value={formData.comment}
-          onChange={(e) => onFormDataChange({ ...formData, comment: e.target.value })}
+          onChange={(e) =>
+            onFormDataChange({ ...formData, comment: e.target.value })
+          }
           placeholder="Share your experience with this professor. How was their teaching style? Were they helpful during office hours? Any tips for future students?"
           className="mt-1 min-h-[120px]"
         />

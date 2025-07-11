@@ -47,9 +47,13 @@ const ProfessorDetail = () => {
         // Step 4: Calculate rating averages and distribution
         const totalReviews = reviews.length;
         const avg = (key: string) =>
-          parseFloat(
-            (reviews.reduce((sum: number, r: any) => sum + (r.review?.[key] || 0), 0) / totalReviews).toFixed(1)
-          );        
+          totalReviews === 0
+            ? 0
+            : parseFloat(
+                (
+                  reviews.reduce((sum: number, r: any) => sum + (r.review?.[key] || 0), 0) / totalReviews
+                ).toFixed(1)
+              );                
   
         const ratingDistribution: { [key: number]: number } = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
         reviews.forEach((r: any) => {
@@ -74,7 +78,7 @@ const ProfessorDetail = () => {
           totalReviews,
           tags: ["Engaging", "Clear", "Helpful"],
           courses: [...new Set(matchedProfessor?.courses_teaching)],
-          reviews: reviews.map((r: any, index: number) => ({
+          reviews: totalReviews === 0 ? [] : reviews.map((r: any, index: number) => ({
             id: index,
             course: r.review.courseCode,
             term: r.review.term,
@@ -86,7 +90,7 @@ const ProfessorDetail = () => {
             helpful: Math.floor(Math.random() * 50),
             notHelpful: Math.floor(Math.random() * 5),
             date: r.review.timestamp?.split("T")[0] || "2025-01-01"
-          }))
+          }))          
         });
       } catch (err: any) {
         setError(err.message || "Something went wrong.");
@@ -171,7 +175,9 @@ const ProfessorDetail = () => {
             <div className="text-right">
               <div className="flex items-center space-x-2 mb-2">
                 <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
-                <span className="text-3xl font-bold">{professor.ratings.overall}</span>
+                <span className="text-3xl font-bold">
+                  {professor.ratings.overall > 0 ? professor.ratings.overall : "N/A"}
+                </span>
               </div>
               <Button className="bg-blue-900 hover:bg-blue-800 text-white">
                 Write a Review
@@ -233,9 +239,13 @@ const ProfessorDetail = () => {
                     <div key={rating} className="flex items-center space-x-2 mb-2">
                       <span className="text-sm w-4">{rating}</span>
                       <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                      <Progress 
-                        value={(professor.ratingDistribution[rating] / professor.totalReviews) * 100} 
-                        className="flex-1 h-2" 
+                      <Progress
+                        value={
+                          professor.totalReviews > 0
+                            ? (professor.ratingDistribution[rating] / professor.totalReviews) * 100
+                            : 0
+                        }
+                        className="flex-1 h-2"
                       />
                       <span className="text-sm text-gray-500 w-8">
                         {professor.ratingDistribution[rating]}
@@ -254,85 +264,89 @@ const ProfessorDetail = () => {
             </div>
 
             <div className="space-y-6">
-              {professor.reviews.map((review: any) => (
-                <Card key={review.id}>
-                  <CardContent className="p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center space-x-4">
-                        <div className="flex items-center space-x-1">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className={`h-4 w-4 ${star <= review.rating
-                                ? 'fill-yellow-400 text-yellow-400' 
-                                : 'text-gray-300'}`}
-                            />
-                          ))}
+              {professor.reviews.length > 0 ? (
+                professor.reviews.map((review: any) => (
+                  <Card key={review.id}>
+                    <CardContent className="p-6">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex items-center space-x-4">
+                          <div className="flex items-center space-x-1">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star
+                                key={star}
+                                className={`h-4 w-4 ${star <= review.rating
+                                  ? 'fill-yellow-400 text-yellow-400' 
+                                  : 'text-gray-300'}`}
+                              />
+                            ))}
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            <span className="flex items-center">
+                              <BookOpen className="h-4 w-4 mr-1" />
+                              {review.courseCode}
+                            </span>
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            <span className="flex items-center">
+                              <Calendar className="h-4 w-4 mr-1" />
+                              {review.term}
+                            </span>
+                          </div>
                         </div>
-                        <div className="text-sm text-gray-600">
-                          <span className="flex items-center">
-                            <BookOpen className="h-4 w-4 mr-1" />
-                            {review.courseCode}
-                          </span>
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          <span className="flex items-center">
-                            <Calendar className="h-4 w-4 mr-1" />
-                            {review.term}
-                          </span>
-                        </div>
+                        <div className="text-sm text-gray-500">{review.timestamp}</div>
                       </div>
-                      <div className="text-sm text-gray-500">{review.timestamp}</div>
-                    </div>
 
-                    <div className="grid grid-cols-3 gap-4 mb-4 p-3 bg-gray-50 rounded">
-                      <div className="text-center">
-                        <div className="text-xs text-gray-600">Difficulty</div>
-                        <div className={`font-bold ${getDifficultyColor(review.difficulty)}`}>
-                          {review.difficulty}/5
+                      <div className="grid grid-cols-3 gap-4 mb-4 p-3 bg-gray-50 rounded">
+                        <div className="text-center">
+                          <div className="text-xs text-gray-600">Difficulty</div>
+                          <div className={`font-bold ${getDifficultyColor(review.difficulty)}`}>
+                            {review.difficulty}/5
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-xs text-gray-600">Helpfulness</div>
+                          <div className={`font-bold ${getRatingColor(review.helpfulness)}`}>
+                            {review.helpfulness}/5
+                          </div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-xs text-gray-600">Clarity</div>
+                          <div className={`font-bold ${getRatingColor(review.clarity)}`}>
+                            {review.clarity}/5
+                          </div>
                         </div>
                       </div>
-                      <div className="text-center">
-                        <div className="text-xs text-gray-600">Helpfulness</div>
-                        <div className={`font-bold ${getRatingColor(review.helpfulness)}`}>
-                          {review.helpfulness}/5
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xs text-gray-600">Clarity</div>
-                        <div className={`font-bold ${getRatingColor(review.clarity)}`}>
-                          {review.clarity}/5
-                        </div>
-                      </div>
-                    </div>
 
-                    <p className="text-gray-700 mb-4">{review.comment}</p>
+                      <p className="text-gray-700 mb-4">{review.comment}</p>
 
-                    <div className="flex items-center space-x-4 text-sm">
-                      <span className="text-gray-600">Was this helpful?</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleHelpfulVote(review.id, true)}
-                        className={`${helpfulReviews[review.id] === true ? 'bg-green-100 text-green-700' : ''}`}
-                      >
-                        <ThumbsUp className="h-4 w-4 mr-1" />
-                        Yes ({review.helpful})
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleHelpfulVote(review.id, false)}
-                        className={`${helpfulReviews[review.id] === false ? 'bg-red-100 text-red-700' : ''}`}
-                      >
-                        <ThumbsDown className="h-4 w-4 mr-1" />
-                        No ({review.notHelpful})
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                      <div className="flex items-center space-x-4 text-sm">
+                        <span className="text-gray-600">Was this helpful?</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleHelpfulVote(review.id, true)}
+                          className={`${helpfulReviews[review.id] === true ? 'bg-green-100 text-green-700' : ''}`}
+                        >
+                          <ThumbsUp className="h-4 w-4 mr-1" />
+                          Yes ({review.helpful})
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleHelpfulVote(review.id, false)}
+                          className={`${helpfulReviews[review.id] === false ? 'bg-red-100 text-red-700' : ''}`}
+                        >
+                          <ThumbsDown className="h-4 w-4 mr-1" />
+                          No ({review.notHelpful})
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <div className="text-gray-500 text-center py-8">No reviews found for this professor yet.</div>
+              )}
+              </div>
           </div>
         </div>
       </div>
