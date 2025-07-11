@@ -27,25 +27,42 @@ const ProfessorDetail = () => {
       try {
         setLoading(true);
         const encodedName = encodeURIComponent(name);
-        const response = await fetch(`http://localhost:8000/api/v1/professor-reviews/search?name=${encodedName}`);
-        const data = await response.json();
-
-        if (!response.ok) throw new Error(data.error || "Failed to fetch professor");
-
-        const reviews = data;
+  
+        // Step 1: Fetch reviews
+        const reviewRes = await fetch(`http://localhost:8000/api/v1/professor-reviews/search?name=${encodedName}`);
+        const reviews = await reviewRes.json();
+        console.log(reviews)
+        if (!reviewRes.ok) throw new Error(reviews.error || "Failed to fetch professor reviews");
+  
+        // Step 2: Fetch bio data
+        const profRes = await fetch("http://localhost:8000/api/v1/professors");
+        const profs = await profRes.json();
+        if (!profRes.ok) throw new Error(profs.error || "Failed to fetch professor details");
+  
+        // Step 3: Find matching professor for bio
+        const matchedProfessor = profs.find(
+          (p: any) => p.name.toLowerCase() === name?.replace(/%20/g, " ").toLowerCase()
+        );
+  
+        // Step 4: Calculate rating averages and distribution
         const totalReviews = reviews.length;
-
         const avg = (key: string) =>
-          parseFloat((reviews.reduce((sum: number, r: any) => sum + r[key], 0) / totalReviews).toFixed(1));
-
+          parseFloat(
+            (reviews.reduce((sum: number, r: any) => sum + (r.review?.[key] || 0), 0) / totalReviews).toFixed(1)
+          );        
+  
         const ratingDistribution: { [key: number]: number } = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-        reviews.forEach((r: any) => ratingDistribution[r.overallRating]++);
-
+        reviews.forEach((r: any) => {
+          const rating = r.review?.overallRating;
+          if (rating >= 1 && rating <= 5) ratingDistribution[rating]++;
+        });
+  
+        // Step 5: Set professor data
         setProfessor({
           name: name?.replace(/%20/g, " ") || "Professor",
           department: reviews[0]?.department || "N/A",
-          title: "Professor",
-          description: "No description available.",
+          title: matchedProfessor?.professor_type || "Professor",
+          description: matchedProfessor?.biography || "No biography available.",
           ratings: {
             overall: avg("overallRating"),
             difficulty: avg("difficulty"),
@@ -56,31 +73,30 @@ const ProfessorDetail = () => {
           ratingDistribution,
           totalReviews,
           tags: ["Engaging", "Clear", "Helpful"],
-          courses: [...new Set(reviews.map((r: any) => r.courseCode))],
+          courses: [...new Set(matchedProfessor?.courses_teaching)],
           reviews: reviews.map((r: any, index: number) => ({
             id: index,
-            course: r.courseCode,
-            term: r.term,
-            rating: r.overallRating,
-            difficulty: r.difficulty,
-            helpfulness: r.helpfulness,
-            clarity: r.clarity,
-            comment: r.comment,
+            course: r.review.courseCode,
+            term: r.review.term,
+            rating: r.review.overallRating,
+            difficulty: r.review.difficulty,
+            helpfulness: r.review.helpfulness,
+            clarity: r.review.clarity,
+            comment: r.review.comment,
             helpful: Math.floor(Math.random() * 50),
             notHelpful: Math.floor(Math.random() * 5),
-            date: r.date || "2025-01-01"
+            date: r.review.timestamp?.split("T")[0] || "2025-01-01"
           }))
         });
-
       } catch (err: any) {
         setError(err.message || "Something went wrong.");
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchProfessor();
-  }, [name]);
+  }, [name]);  
 
   const handleHelpfulVote = (reviewId: number, isHelpful: boolean) => {
     setHelpfulReviews(prev => ({
@@ -247,7 +263,7 @@ const ProfessorDetail = () => {
                           {[1, 2, 3, 4, 5].map((star) => (
                             <Star
                               key={star}
-                              className={`h-4 w-4 ${star <= review.rating 
+                              className={`h-4 w-4 ${star <= review.rating
                                 ? 'fill-yellow-400 text-yellow-400' 
                                 : 'text-gray-300'}`}
                             />
@@ -256,7 +272,7 @@ const ProfessorDetail = () => {
                         <div className="text-sm text-gray-600">
                           <span className="flex items-center">
                             <BookOpen className="h-4 w-4 mr-1" />
-                            {review.course}
+                            {review.courseCode}
                           </span>
                         </div>
                         <div className="text-sm text-gray-600">
@@ -266,7 +282,7 @@ const ProfessorDetail = () => {
                           </span>
                         </div>
                       </div>
-                      <div className="text-sm text-gray-500">{review.date}</div>
+                      <div className="text-sm text-gray-500">{review.timestamp}</div>
                     </div>
 
                     <div className="grid grid-cols-3 gap-4 mb-4 p-3 bg-gray-50 rounded">
