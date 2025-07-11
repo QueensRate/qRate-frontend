@@ -128,7 +128,7 @@ const BrowseProfessors = () => {
                       <h3 className="font-bold text-lg text-blue-900 mb-1">{professor.name}</h3>
                       <p className="text-sm text-gray-500 mb-2">{professor.department}</p>
                       <p className="text-sm text-gray-600">
-                        Courses: {(professor.courses ?? []).join(", ")}
+                        Courses: {(professor.courses_teaching ?? []).join(", ")}
                       </p>
                     </div>
                     <div className="text-right">
