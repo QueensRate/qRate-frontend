@@ -21,8 +21,8 @@ const BrowseProfessors = () => {
     const fetchProfessors = async () => {
       try {
         const res = await axios.get("http://localhost:8000/api/v1/professors");
-        console.log("API response:", res.data); // Log to inspect the structure
-        setProfessors(Array.isArray(res.data) ? res.data : res.data.data || []); // Adjust based on API structure
+        console.log("API response:", res.data); 
+        setProfessors(Array.isArray(res.data) ? res.data : res.data.data || []); 
       } catch (error) {
         console.error("Failed to fetch courses:", error);
       } finally {
@@ -33,22 +33,27 @@ const BrowseProfessors = () => {
     fetchProfessors();
   }, []);
 
-  const departments = ["Computing", "Electrical Engineering", "Mathematics", "Psychology", "Business", "Chemistry"];
+  const departments = ["Faculty of Arts and Science", "Mechanical and Materials Engineering", "Electrical and Computer Engineering", "Smith School of Business", "Smith Engineering", "Faculty of Health Sciences", "Faculty of Education", "Faculty of Law"];
+
 
   const filteredProfessors = professors.filter(professor => {
-    const matchesSearch = professor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         professor.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         professor.courses.some(course => course.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesDepartment = !selectedDepartment || selectedDepartment === "all" || professor.department === selectedDepartment;
-    
+    const matchesSearch = 
+      (professor.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (professor.courses_teaching?.join(" ") || "").toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesDepartment =
+      !selectedDepartment ||
+      selectedDepartment === "all" ||
+      professor.faculty?.toLowerCase().trim() === selectedDepartment.toLowerCase().trim();
+
     const matchesRating = !selectedRating || selectedRating === "all" ||
-                         (selectedRating === "4+" && professor.rating >= 4) ||
-                         (selectedRating === "3+" && professor.rating >= 3) ||
-                         (selectedRating === "2+" && professor.rating >= 2);
-    
-    return matchesSearch && matchesDepartment && matchesRating;
+      (selectedRating === "4+" && professor.rating >= 4) ||
+      (selectedRating === "3+" && professor.rating >= 3) ||
+      (selectedRating === "2+" && professor.rating >= 2);
+
+    return matchesSearch && matchesRating && matchesDepartment;
   });
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -69,7 +74,7 @@ const BrowseProfessors = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
-                  placeholder="Search by professor name, department, or course..."
+                  placeholder="Search by professor name"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -123,7 +128,7 @@ const BrowseProfessors = () => {
                       <h3 className="font-bold text-lg text-blue-900 mb-1">{professor.name}</h3>
                       <p className="text-sm text-gray-500 mb-2">{professor.department}</p>
                       <p className="text-sm text-gray-600">
-                        Courses: {(professor.courses ?? []).join(", ")}
+                        Courses: {(professor.courses_teaching ?? []).join(", ")}
                       </p>
                     </div>
                     <div className="text-right">
