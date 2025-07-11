@@ -27,32 +27,36 @@ interface CourseReviewFormProps {
 const CourseReviewForm = ({ formData, onFormDataChange, getRatingLabel }: CourseReviewFormProps) => {
   const [professorList, setProfessorList] = useState<string[]>([]);
 
+  const [courseOptions, setCourseOptions] = useState<{ code: string; name: string }[]>([]);
+
   useEffect(() => {
-    const fetchProfessors = async () => {
+    const fetchCoursesAndProfessors = async () => {
       try {
-        const res = await fetch("http://localhost:8000/api/v1/professors");
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          const names = data.map((p: any) => p.name);
+        // Fetch courses
+        const courseRes = await fetch("http://localhost:8000/api/v1/courses");
+        const courseData = await courseRes.json();
+        if (Array.isArray(courseData)) {
+          const formatted = courseData.map((course: any) => ({
+            code: course.code,
+            name: course.title
+          }));
+          setCourseOptions(formatted);
+        }
+  
+        // Fetch professors
+        const profRes = await fetch("http://localhost:8000/api/v1/professors");
+        const profData = await profRes.json();
+        if (Array.isArray(profData)) {
+          const names = profData.map((p: any) => p.name);
           setProfessorList(names);
         }
       } catch (err) {
-        console.error("Failed to fetch professors", err);
+        console.error("Failed to fetch courses or professors", err);
       }
     };
-
-    fetchProfessors();
+  
+    fetchCoursesAndProfessors();
   }, []);
-
-  const courseOptions = [
-    { code: "COMP 102", name: "Introduction to Computing" },
-    { code: "COMP 202", name: "Programming Methodology" },
-    { code: "ELEC 221", name: "Electric Circuits" },
-    { code: "MATH 120", name: "Differential and Integral Calculus" },
-    { code: "PSYC 100", name: "Introduction to Psychology" },
-    { code: "BUSI 200", name: "Introduction to Business" },
-    { code: "CHEM 112", name: "General Chemistry" }
-  ];
 
   const terms = [
     "Summer 2025",
@@ -84,8 +88,8 @@ const CourseReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Course
             <SelectTrigger>
               <SelectValue placeholder="Select a course" />
             </SelectTrigger>
-            <SelectContent>
-              {courseOptions.map(course => (
+            <SelectContent side="bottom" position="popper" avoidCollisions={false}>
+              {courseOptions.map((course) => (
                 <SelectItem key={course.code} value={course.code}>
                   {course.code}
                 </SelectItem>
@@ -122,7 +126,7 @@ const CourseReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Course
                 }
               />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent side="bottom" position="popper" avoidCollisions={false}>
               {professorList.map((prof) => (
                 <SelectItem key={prof} value={prof}>
                   {prof}
@@ -137,7 +141,7 @@ const CourseReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Course
             <SelectTrigger>
               <SelectValue placeholder="Select term" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent side="bottom" position="popper" avoidCollisions={false}>
               {terms.map(term => (
                 <SelectItem key={term} value={term}>{term}</SelectItem>
               ))}

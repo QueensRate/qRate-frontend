@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import axios from "axios";
 
-
 const BrowseProfessors = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
@@ -21,60 +20,33 @@ const BrowseProfessors = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-  
-        const profRes = await axios.get("http://localhost:8000/api/v1/professors");
-        const professorList = Array.isArray(profRes.data) ? profRes.data : [];
-  
-        const enriched = await Promise.all(
-          professorList.map(async (prof) => {
-            try {
-              const encodedName = encodeURIComponent(prof.name);
-              const res = await axios.get(`http://localhost:8000/api/v1/professor-reviews/search?name=${encodedName}`);
-              const reviews = Array.isArray(res.data) ? res.data : [];
-              const total = reviews.length;
-  
-              const avg = (key: string) =>
-                total === 0
-                  ? 0
-                  : parseFloat(
-                      (
-                        reviews.reduce((sum, r) => sum + (r.review?.[key] || 0), 0) / total
-                      ).toFixed(1)
-                    );
-  
-              return {
-                ...prof,
-                rating: avg("overallRating"),
-                difficulty: avg("difficulty"),
-                helpfulness: avg("helpfulness"),
-                clarity: avg("clarity"),
-                reviews: total,
-                tags: ["Helpful", "Engaging", "Clear"] // Optional placeholder
-              };
-            } catch (err) {
-              console.warn(`Failed to fetch reviews for ${prof.name}`, err);
-              return { ...prof, rating: 0, reviews: 0 };
-            }
-          })
-        );
-  
-        setProfessors(enriched);
+        const res = await axios.get("http://localhost:8000/api/v1/professors");
+        const professorList = Array.isArray(res.data) ? res.data : [];
+        setProfessors(professorList);
       } catch (error) {
-        console.error("Failed to fetch professors or reviews:", error);
+        console.error("Failed to fetch professors:", error);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchData();
-  }, []);  
+  }, []);
 
-  const departments = ["Faculty of Arts and Science", "Mechanical and Materials Engineering", "Electrical and Computer Engineering", "Smith School of Business", "Smith Engineering", "Faculty of Health Sciences", "Faculty of Education", "Faculty of Law"];
+  const departments = [
+    "Faculty of Arts and Science",
+    "Mechanical and Materials Engineering",
+    "Electrical and Computer Engineering",
+    "Smith School of Business",
+    "Smith Engineering",
+    "Faculty of Health Sciences",
+    "Faculty of Education",
+    "Faculty of Law"
+  ];
 
-
-  const filteredProfessors = professors.filter(professor => {
-    const matchesSearch = 
-      (professor.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredProfessors = professors.filter((professor) => {
+    const matchesSearch =
+      (professor.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       (professor.courses_teaching?.join(" ") || "").toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesDepartment =
@@ -82,28 +54,26 @@ const BrowseProfessors = () => {
       selectedDepartment === "all" ||
       professor.faculty?.toLowerCase().trim() === selectedDepartment.toLowerCase().trim();
 
-    const matchesRating = !selectedRating || selectedRating === "all" ||
+    const matchesRating =
+      !selectedRating ||
+      selectedRating === "all" ||
       (selectedRating === "4+" && professor.rating >= 4) ||
       (selectedRating === "3+" && professor.rating >= 3) ||
       (selectedRating === "2+" && professor.rating >= 2);
 
-    return matchesSearch && matchesRating && matchesDepartment;
+    return matchesSearch && matchesDepartment && matchesRating;
   });
-
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation Bar */}
-      <Navbar/>
+      <Navbar />
 
       <div className="container mx-auto px-4 py-8">
-        {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Browse Professors</h1>
           <p className="text-gray-600">Find and compare professors at Queen's University</p>
         </div>
 
-        {/* Search and Filters */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="md:col-span-2">
@@ -123,8 +93,10 @@ const BrowseProfessors = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Departments</SelectItem>
-                {departments.map(dept => (
-                  <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                {departments.map((dept) => (
+                  <SelectItem key={dept} value={dept}>
+                    {dept}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -142,7 +114,6 @@ const BrowseProfessors = () => {
           </div>
         </div>
 
-        {/* Results Summary */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-gray-600">
             Showing {filteredProfessors.length} of {professors.length} professors
@@ -153,16 +124,15 @@ const BrowseProfessors = () => {
           </div>
         </div>
 
-        {/* Professor Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {filteredProfessors.map((professor) => (
-            <Link key={professor.id} to={`/professor/${professor.name}`}>
+            <Link key={professor.id} to={`/professor/${encodeURIComponent(professor.name)}`}>
               <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full">
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <div>
                       <h3 className="font-bold text-lg text-blue-900 mb-1">{professor.name}</h3>
-                      <p className="text-sm text-gray-500 mb-2">{professor.department}</p>
+                      <p className="text-sm text-gray-500 mb-2">{professor.faculty}</p>
                       <p className="text-sm text-gray-600">
                         Courses: {(professor.courses_teaching ?? []).join(", ")}
                       </p>
@@ -170,29 +140,27 @@ const BrowseProfessors = () => {
                     <div className="text-right">
                       <div className="flex items-center space-x-1 mb-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="font-semibold">{professor.rating}</span>
+                        <span className="font-semibold">{professor.rating ?? "N/A"}</span>
                       </div>
                       <div className="text-sm text-gray-500">{professor.reviews} reviews</div>
                     </div>
                   </div>
 
-                  {/* Rating Breakdown */}
                   <div className="grid grid-cols-3 gap-4 mb-4">
                     <div className="text-center">
                       <div className="text-sm font-medium text-gray-700">Difficulty</div>
-                      <div className="text-lg font-bold text-orange-500">{professor.difficulty}</div>
+                      <div className="text-lg font-bold text-orange-500">{professor.difficulty ?? "N/A"}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-sm font-medium text-gray-700">Helpfulness</div>
-                      <div className="text-lg font-bold text-green-500">{professor.helpfulness}</div>
+                      <div className="text-lg font-bold text-green-500">{professor.helpfulness ?? "N/A"}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-sm font-medium text-gray-700">Clarity</div>
-                      <div className="text-lg font-bold text-purple-500">{professor.clarity}</div>
+                      <div className="text-lg font-bold text-purple-500">{professor.clarity ?? "N/A"}</div>
                     </div>
                   </div>
 
-                  {/* Tags */}
                   <div className="flex flex-wrap gap-2">
                     {professor.tags?.map((tag, index) => (
                       <Badge key={index} variant="secondary" className="text-xs">

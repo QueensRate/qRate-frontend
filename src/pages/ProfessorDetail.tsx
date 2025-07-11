@@ -28,28 +28,23 @@ const ProfessorDetail = () => {
         setLoading(true);
         const encodedName = encodeURIComponent(name);
   
-        // Step 1: Fetch reviews
         const reviewRes = await fetch(`http://localhost:8000/api/v1/professor-reviews/search?name=${encodedName}`);
         const reviews = await reviewRes.json();
-        console.log(reviews)
         if (!reviewRes.ok) throw new Error(reviews.error || "Failed to fetch professor reviews");
   
-        // Step 2: Fetch bio data
         const profRes = await fetch("http://localhost:8000/api/v1/professors");
         const profs = await profRes.json();
         if (!profRes.ok) throw new Error(profs.error || "Failed to fetch professor details");
   
-        // Step 3: Find matching professor for bio
         const matchedProfessor = profs.find(
           (p: any) => p.name.toLowerCase() === name?.replace(/%20/g, " ").toLowerCase()
         );
   
-        // Step 4: Calculate rating averages and distribution
         const totalReviews = reviews.length;
         const avg = (key: string) =>
           totalReviews === 0
             ? 0
-            : parseFloat(
+            : Number(
                 (
                   reviews.reduce((sum: number, r: any) => sum + (r.review?.[key] || 0), 0) / totalReviews
                 ).toFixed(1)
@@ -61,7 +56,6 @@ const ProfessorDetail = () => {
           if (rating >= 1 && rating <= 5) ratingDistribution[rating]++;
         });
   
-        // Step 5: Set professor data
         setProfessor({
           name: name?.replace(/%20/g, " ") || "Professor",
           department: reviews[0]?.department || "N/A",
@@ -80,16 +74,16 @@ const ProfessorDetail = () => {
           courses: [...new Set(matchedProfessor?.courses_teaching)],
           reviews: totalReviews === 0 ? [] : reviews.map((r: any, index: number) => ({
             id: index,
-            course: r.review.courseCode,
+            courseCode: r.review.courseCode,
             term: r.review.term,
-            rating: r.review.overallRating,
-            difficulty: r.review.difficulty,
-            helpfulness: r.review.helpfulness,
-            clarity: r.review.clarity,
+            rating: Number(r.review.overallRating?.toFixed(1)),
+            difficulty: Number(r.review.difficulty?.toFixed(1)),
+            helpfulness: Number(r.review.helpfulness?.toFixed(1)),
+            clarity: Number(r.review.clarity?.toFixed(1)),
             comment: r.review.comment,
             helpful: Math.floor(Math.random() * 50),
             notHelpful: Math.floor(Math.random() * 5),
-            date: r.review.timestamp?.split("T")[0] || "2025-01-01"
+            timestamp: r.review.timestamp?.split("T")[0] || "2025-01-01"
           }))          
         });
       } catch (err: any) {
@@ -176,7 +170,7 @@ const ProfessorDetail = () => {
               <div className="flex items-center space-x-2 mb-2">
                 <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
                 <span className="text-3xl font-bold">
-                  {professor.ratings.overall > 0 ? professor.ratings.overall : "N/A"}
+                  {professor.ratings.overall.toFixed(1)}
                 </span>
               </div>
               <Link to={`/submit-review?name=${encodeURIComponent(professor.name)}`}>
@@ -204,7 +198,9 @@ const ProfessorDetail = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="text-center pb-4 border-b">
-                  <div className="text-5xl font-bold text-blue-900 mb-2">{professor.ratings.overall}</div>
+                  <div className="text-5xl font-bold text-blue-900 mb-2">
+                    {professor.ratings.overall.toFixed(1)}
+                  </div>
                   <div className="flex justify-center mb-2">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <Star
@@ -229,7 +225,7 @@ const ProfessorDetail = () => {
                           ? getDifficultyColor(professor.ratings[key])
                           : getRatingColor(professor.ratings[key])
                       }`}>
-                        {professor.ratings[key]}/5
+                        {professor.ratings[key].toFixed(1)}/5
                       </span>
                     </div>
                   ))}

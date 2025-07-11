@@ -124,7 +124,7 @@ const ProfessorReviewForm = ({
                 }
               />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent side="bottom" position="popper" avoidCollisions={false}>
               {professorList.map((prof) => (
                 <SelectItem key={prof} value={prof}>
                   {prof}
@@ -144,7 +144,7 @@ const ProfessorReviewForm = ({
             <SelectTrigger>
               <SelectValue placeholder="Select department" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent side="bottom" position="popper" avoidCollisions={false}>
               {departments.map((dept) => (
                 <SelectItem key={dept} value={dept}>
                   {dept}
@@ -168,7 +168,7 @@ const ProfessorReviewForm = ({
             <SelectTrigger>
               <SelectValue placeholder="Select course (optional)" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent side="bottom" position="popper" avoidCollisions={false}>
               {courseOptions.map((course) => (
                 <SelectItem key={course.code} value={course.code}>
                   {course.code}
@@ -188,7 +188,7 @@ const ProfessorReviewForm = ({
             <SelectTrigger>
               <SelectValue placeholder="Select term" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent side="bottom" position="popper" avoidCollisions={false}>
               {terms.map((term) => (
                 <SelectItem key={term} value={term}>
                   {term}

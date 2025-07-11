@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Star, Search, Filter, BookOpen } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -14,54 +19,62 @@ const BrowseCourses = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedRating, setSelectedRating] = useState("");
-
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  const fetchCourses = async () => {
-    try {
-      const res = await axios.get("http://localhost:8000/api/v1/courses");
-      console.log("API response:", res.data); 
-      setCourses(Array.isArray(res.data) ? res.data : res.data.data || []); 
-    } catch (error) {
-      console.error("Failed to fetch courses:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchCourses = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get("http://localhost:8000/api/v1/courses");
+        setCourses(res.data);
+      } catch (error) {
+        console.error("Failed to fetch courses:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchCourses();
-}, []);
+    fetchCourses();
+  }, []);
 
-const departments = ["Faculty of Arts and Science", "Smith School of Business", "Smith Engineering", "Faculty of Health Sciences", "Faculty of Education", "Faculty of Law"];
+  const departments = [
+    "Faculty of Arts and Science",
+    "Smith School of Business",
+    "Smith Engineering",
+    "Faculty of Health Sciences",
+    "Faculty of Education",
+    "Faculty of Law"
+  ];
 
-const filteredCourses = courses.filter(course => {
-  const matchesSearch = 
-    (course.code || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (course.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (course.instructor || '').toLowerCase().includes(searchTerm.toLowerCase());
-  
-  const matchesDepartment =
-    !selectedDepartment ||
-    selectedDepartment === "all" ||
-    course.offering_faculty?.toLowerCase().trim() === selectedDepartment.toLowerCase().trim();
+  const filteredCourses = courses.filter((course) => {
+    const matchesSearch =
+      (course.code || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (course.name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (course.professor || "").toLowerCase().includes(searchTerm.toLowerCase());
 
-  
-  const matchesRating = !selectedRating || selectedRating === "all" ||
-    (selectedRating === "4+" && course.rating >= 4) ||
-    (selectedRating === "3+" && course.rating >= 3) ||
-    (selectedRating === "2+" && course.rating >= 2);
-  
-  return matchesSearch && matchesDepartment && matchesRating;
-});
+    const matchesDepartment =
+      !selectedDepartment ||
+      selectedDepartment === "all" ||
+      (course.offering_faculty || "").toLowerCase().trim() ===
+        selectedDepartment.toLowerCase().trim();
+
+    const matchesRating =
+      !selectedRating ||
+      selectedRating === "all" ||
+      (selectedRating === "4+" && course.rating >= 4) ||
+      (selectedRating === "3+" && course.rating >= 3) ||
+      (selectedRating === "2+" && course.rating >= 2);
+
+    return matchesSearch && matchesDepartment && matchesRating;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
 
       <div className="container mx-auto px-4 py-8">
-        {/* Page Header */}
+        {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Browse Courses</h1>
           <p className="text-gray-600">Find and compare courses at Queen's University</p>
@@ -74,7 +87,7 @@ const filteredCourses = courses.filter(course => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <Input
-                  placeholder="Search by course code or name"
+                  placeholder="Search by course code, name, or instructor"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -87,8 +100,10 @@ const filteredCourses = courses.filter(course => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Departments</SelectItem>
-                {departments.map(dept => (
-                  <SelectItem key={dept} value={dept}>{dept}</SelectItem>
+                {departments.map((dept) => (
+                  <SelectItem key={dept} value={dept}>
+                    {dept}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -106,7 +121,7 @@ const filteredCourses = courses.filter(course => {
           </div>
         </div>
 
-        {/* Results Summary */}
+        {/* Summary */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-gray-600">
             Showing {filteredCourses.length} of {courses.length} courses
@@ -127,47 +142,60 @@ const filteredCourses = courses.filter(course => {
                     <div>
                       <h3 className="font-bold text-lg text-blue-900 mb-1">{course.code}</h3>
                       <h4 className="text-gray-700 font-medium mb-2">{course.name}</h4>
-                      <p className="text-sm text-gray-500">{course.offering_faculty} • {course.title}</p>
+                      <p className="text-sm text-gray-500">
+                        {course.offering_faculty} • {course.title}
+                      </p>
                     </div>
                     <div className="text-right">
                       <div className="flex items-center space-x-1 mb-1">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="font-semibold">{course.rating}</span>
+                        <span className="font-semibold">{course.avg_rating}</span>
                       </div>
-                      <div className="text-sm text-gray-500">{course.num_reviews} reviews</div>
+                      <div className="text-sm text-gray-500">
+                        {course.num_reviews} reviews
+                      </div>
                     </div>
                   </div>
 
-                  {/* Rating Breakdown */}
+                  {/* Ratings */}
                   <div className="grid grid-cols-3 gap-4 mb-4">
                     <div className="text-center">
                       <div className="text-sm font-medium text-gray-700">Difficulty</div>
-                      <div className="text-lg font-bold text-orange-500">{course.difficulty}</div>
+                      <div className="text-lg font-bold text-orange-500">
+                        {course.difficulty}
+                      </div>
                     </div>
                     <div className="text-center">
                       <div className="text-sm font-medium text-gray-700">Usefulness</div>
-                      <div className="text-lg font-bold text-green-500">{course.usefulness}</div>
+                      <div className="text-lg font-bold text-green-500">
+                        {course.usefulness}
+                      </div>
                     </div>
                     <div className="text-center">
                       <div className="text-sm font-medium text-gray-700">Workload</div>
-                      <div className="text-lg font-bold text-purple-500">{course.workload}</div>
+                      <div className="text-lg font-bold text-purple-500">
+                        {course.workload}
+                      </div>
                     </div>
                   </div>
 
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {course.tags?.map((tag: string) => (
-                      <Badge key={tag} variant="secondary" className="text-xs">
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
+                  {/* Tags (optional placeholder) */}
+                  {course.tags && (
+                    <div className="flex flex-wrap gap-2">
+                      {course.tags.map((tag: string) => (
+                        <Badge key={tag} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </Link>
           ))}
         </div>
 
+        {/* No Results */}
         {filteredCourses.length === 0 && (
           <div className="text-center py-12">
             <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
