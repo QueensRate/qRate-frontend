@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, BookOpen, User } from "lucide-react";
@@ -15,8 +15,14 @@ import ReviewGuidelines from "@/components/ReviewGuidelines";
 
 const SubmitReview = () => {
   const { toast } = useToast();
-  const [reviewType, setReviewType] = useState("course"); // "course" or "professor"
-  
+  const [searchParams] = useSearchParams();
+  const professorNameFromQuery = searchParams.get("name") || "";
+
+  // Auto-select review type based on URL param
+  const [reviewType, setReviewType] = useState(
+    professorNameFromQuery ? "professor" : "course"
+  );
+
   const [courseFormData, setCourseFormData] = useState({
     courseCode: "",
     courseName: "",
@@ -39,16 +45,27 @@ const SubmitReview = () => {
     difficulty: [3],
     helpfulness: [4],
     clarity: [4],
-    wouldTakeAgain: [1], // 1 = Yes, 0 = No
+    wouldTakeAgain: [1],
     comment: ""
   });
 
+  // Sync professor name from URL to form data and switch tab
+  useEffect(() => {
+    if (professorNameFromQuery) {
+      setProfessorFormData((prev) => ({
+        ...prev,
+        professorName: professorNameFromQuery
+      }));
+      setReviewType("professor");
+    }
+  }, [professorNameFromQuery]);
+
   const getRatingLabel = (value: number, type: string) => {
-    if (type === 'difficulty' || type === 'workload') {
+    if (type === "difficulty" || type === "workload") {
       const labels = ["Very Easy", "Easy", "Moderate", "Hard", "Very Hard"];
       return labels[value - 1];
     }
-    if (type === 'wouldTakeAgain') {
+    if (type === "wouldTakeAgain") {
       return value === 1 ? "Yes" : "No";
     }
     const labels = ["Very Poor", "Poor", "Average", "Good", "Excellent"];
@@ -57,33 +74,33 @@ const SubmitReview = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Basic validation - handle each form type separately
+
     if (reviewType === "course") {
-      if (!courseFormData.courseCode || !courseFormData.instructor || !courseFormData.term || !courseFormData.comment.trim()) {
+      if (
+        !courseFormData.courseCode ||
+        !courseFormData.instructor ||
+        !courseFormData.term ||
+        !courseFormData.comment.trim()
+      ) {
         toast({
           title: "Missing Information",
           description: "Please fill in all required fields.",
-          variant: "destructive",
+          variant: "destructive"
         });
         return;
       }
-      
       if (courseFormData.comment.length < 50) {
         toast({
           title: "Comment Too Short",
           description: "Please provide a more detailed review (at least 50 characters).",
-          variant: "destructive",
+          variant: "destructive"
         });
         return;
       }
-
       try {
         const response = await fetch("http://localhost:8000/api/v1/reviews/new", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             courseCode: courseFormData.courseCode,
             courseName: courseFormData.courseName,
@@ -99,21 +116,18 @@ const SubmitReview = () => {
               name: "Anonymous",
               userId: "guest-123"
             }
-          })        
-        });
-    
-        const data = await response.json();
-    
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to submit review.");
-        }
-      
-        toast({
-          title: "Review Submitted!",
-          description: "Thank you for your course review. Your feedback will help other students.",
+          })
         });
 
-        // Reset course form
+        const data = await response.json();
+
+        if (!response.ok) throw new Error(data.error || "Failed to submit review.");
+
+        toast({
+          title: "Review Submitted!",
+          description: "Thank you for your course review. Your feedback will help other students."
+        });
+
         setCourseFormData({
           courseCode: "",
           courseName: "",
@@ -126,7 +140,6 @@ const SubmitReview = () => {
           teaching: [4],
           comment: ""
         });
-    
       } catch (err: any) {
         toast({
           title: "Error",
@@ -135,31 +148,31 @@ const SubmitReview = () => {
         });
       }
     } else {
-      // Professor review validation
-      if (!professorFormData.professorName || !professorFormData.department || !professorFormData.term || !professorFormData.comment.trim()) {
+      if (
+        !professorFormData.professorName ||
+        !professorFormData.department ||
+        !professorFormData.term ||
+        !professorFormData.comment.trim()
+      ) {
         toast({
           title: "Missing Information",
           description: "Please fill in all required fields.",
-          variant: "destructive",
+          variant: "destructive"
         });
         return;
       }
-      
       if (professorFormData.comment.length < 50) {
         toast({
           title: "Comment Too Short",
           description: "Please provide a more detailed review (at least 50 characters).",
-          variant: "destructive",
+          variant: "destructive"
         });
         return;
       }
-
       try {
         const response = await fetch("http://localhost:8000/api/v1/professor-reviews/new", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             professorName: professorFormData.professorName,
             department: professorFormData.department,
@@ -177,18 +190,16 @@ const SubmitReview = () => {
             }
           })
         });
-      
+
         const data = await response.json();
-      
-        if (!response.ok) {
-          throw new Error(data.error || "Failed to submit professor review.");
-        }
-      
+
+        if (!response.ok) throw new Error(data.error || "Failed to submit professor review.");
+
         toast({
           title: "Review Submitted!",
-          description: "Thank you for your professor review. Your feedback will help other students.",
+          description: "Thank you for your professor review. Your feedback will help other students."
         });
-      
+
         setProfessorFormData({
           professorName: "",
           department: "",
@@ -201,14 +212,13 @@ const SubmitReview = () => {
           wouldTakeAgain: [1],
           comment: ""
         });
-      
       } catch (err: any) {
         toast({
           title: "Error",
           description: err.message || "Something went wrong.",
           variant: "destructive"
         });
-      }      
+      }
     }
   };
 
@@ -248,13 +258,13 @@ const SubmitReview = () => {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 {reviewType === "course" ? (
-                  <CourseReviewForm 
+                  <CourseReviewForm
                     formData={courseFormData}
                     onFormDataChange={setCourseFormData}
                     getRatingLabel={getRatingLabel}
                   />
                 ) : (
-                  <ProfessorReviewForm 
+                  <ProfessorReviewForm
                     formData={professorFormData}
                     onFormDataChange={setProfessorFormData}
                     getRatingLabel={getRatingLabel}
@@ -263,7 +273,10 @@ const SubmitReview = () => {
 
                 <ReviewGuidelines reviewType={reviewType} />
 
-                <Button type="submit" className="w-full bg-blue-900 hover:bg-blue-800 text-white">
+                <Button
+                  type="submit"
+                  className="w-full bg-blue-900 hover:bg-blue-800 text-white"
+                >
                   Submit {reviewType === "course" ? "Course" : "Professor"} Review
                 </Button>
               </form>

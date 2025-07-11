@@ -3,6 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import RatingSlider from "./RatingSlider";
+import { useEffect, useState } from "react";
 
 interface CourseFormData {
   courseCode: string;
@@ -24,6 +25,25 @@ interface CourseReviewFormProps {
 }
 
 const CourseReviewForm = ({ formData, onFormDataChange, getRatingLabel }: CourseReviewFormProps) => {
+  const [professorList, setProfessorList] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchProfessors = async () => {
+      try {
+        const res = await fetch("http://localhost:8000/api/v1/professors");
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          const names = data.map((p: any) => p.name);
+          setProfessorList(names);
+        }
+      } catch (err) {
+        console.error("Failed to fetch professors", err);
+      }
+    };
+
+    fetchProfessors();
+  }, []);
+
   const courseOptions = [
     { code: "COMP 102", name: "Introduction to Computing" },
     { code: "COMP 202", name: "Programming Methodology" },
@@ -89,12 +109,27 @@ const CourseReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Course
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="instructor">Instructor Name *</Label>
-          <Input
-            id="instructor"
+          <Select
             value={formData.instructor}
-            onChange={(e) => onFormDataChange({ ...formData, instructor: e.target.value })}
-            placeholder="e.g., Dr. Smith"
-          />
+            onValueChange={(value) =>
+              onFormDataChange({ ...formData, instructor: value })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue
+                placeholder={
+                  professorList.length ? "Select an instructor" : "Loading..."
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {professorList.map((prof) => (
+                <SelectItem key={prof} value={prof}>
+                  {prof}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <Label htmlFor="term">Term Taken *</Label>

@@ -179,9 +179,11 @@ const ProfessorDetail = () => {
                   {professor.ratings.overall > 0 ? professor.ratings.overall : "N/A"}
                 </span>
               </div>
-              <Button className="bg-blue-900 hover:bg-blue-800 text-white">
-                Write a Review
-              </Button>
+              <Link to={`/submit-review?name=${encodeURIComponent(professor.name)}`}>
+                <Button className="bg-blue-900 hover:bg-blue-800 text-white">
+                  Write a Review
+                </Button>
+              </Link>
             </div>
           </div>
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
@@ -35,6 +36,8 @@ const ProfessorReviewForm = ({
   getRatingLabel
 }: ProfessorReviewFormProps) => {
   const [professorList, setProfessorList] = useState<string[]>([]);
+  const [searchParams] = useSearchParams();
+  const professorNameFromQuery = searchParams.get("name") || "";
 
   const departments = [
     "Computing",
@@ -72,6 +75,15 @@ const ProfessorReviewForm = ({
         if (Array.isArray(data)) {
           const names = data.map((p: any) => p.name);
           setProfessorList(names);
+
+          // Auto-select professor from URL query if present and valid
+          if (
+            professorNameFromQuery &&
+            names.includes(professorNameFromQuery) &&
+            formData.professorName !== professorNameFromQuery
+          ) {
+            onFormDataChange({ ...formData, professorName: professorNameFromQuery });
+          }
         }
       } catch (err) {
         console.error("Failed to fetch professors", err);
@@ -79,7 +91,19 @@ const ProfessorReviewForm = ({
     };
 
     fetchProfessors();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Intentionally ignoring dependencies to run only once on mount
+
+  useEffect(() => {
+    if (
+      professorList.length > 0 &&
+      professorNameFromQuery &&
+      professorList.includes(professorNameFromQuery) &&
+      formData.professorName !== professorNameFromQuery
+    ) {
+      onFormDataChange({ ...formData, professorName: professorNameFromQuery });
+    }
+  }, [professorList, professorNameFromQuery, formData.professorName, onFormDataChange]);  
 
   return (
     <>
