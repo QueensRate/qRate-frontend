@@ -85,9 +85,11 @@ const CourseDetail = () => {
                 <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
                 <span className="text-3xl font-bold">{course.ratings.overall}</span>
               </div>
-              <Button className="bg-blue-900 hover:bg-blue-800 text-white">
-                Write a Review
-              </Button>
+              <Link to={`/submit-review?code=${encodeURIComponent(course.code)}`}>
+                <Button className="bg-blue-900 hover:bg-blue-800 text-white">
+                  Write a Review
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -183,28 +185,6 @@ const CourseDetail = () => {
                       </span>
                     </div>
                   </div>
-
-                  {/* Rating Distribution
-
-                  const ratingDistribution = course.ratingDistribution || { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-                  const totalReviews = course.totalReviews || 0;
-
-                  <div className="pt-4 border-t">
-                    <h4 className="font-medium mb-3">Rating Distribution</h4>
-                    {[5, 4, 3, 2, 1].map((rating) => {
-                      const count = ratingDistribution[rating as keyof typeof ratingDistribution];
-                      const percentage = totalReviews > 0 ? (count / totalReviews) * 100 : 0;
-
-                      return (
-                        <div key={rating} className="flex items-center space-x-2 mb-2">
-                          <span className="text-sm w-4">{rating}</span>
-                          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                          <Progress value={percentage} className="flex-1 h-2" />
-                          <span className="text-sm text-gray-500 w-8">{count}</span>
-                        </div>
-                      );
-                    })}
-                  </div> */}
                 </CardContent>
               </Card>
 
@@ -252,7 +232,8 @@ const CourseDetail = () => {
             </div>
 
             <div className="space-y-6">
-              {(course.reviews || []).map((review) => (
+            {course.reviews.length > 0 ? (
+              (course.reviews || []).map((review) => (
                 <Card key={review.id}>
                   <CardContent className="p-6">
                     <div className="flex justify-between items-start mb-4">
@@ -280,7 +261,7 @@ const CourseDetail = () => {
                           </span>
                         </div>
                       </div>
-                      <div className="text-sm text-gray-500">{review.date}</div>
+                      <div className="text-sm text-gray-500">{new Date(review.date).toISOString().split('T')[0]}</div>
                     </div>
 
                     {/* Individual Ratings */}
@@ -331,7 +312,10 @@ const CourseDetail = () => {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+              ))
+            ) : (
+              <div className="text-gray-500 text-center py-8">No reviews found for this course yet.</div>
+            )}
             </div>
           </div>
         </div>

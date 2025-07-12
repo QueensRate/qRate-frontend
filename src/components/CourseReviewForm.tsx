@@ -1,8 +1,16 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import RatingSlider from "./RatingSlider";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 interface CourseFormData {
   courseCode: string;
@@ -23,16 +31,75 @@ interface CourseReviewFormProps {
   getRatingLabel: (value: number, type: string) => string;
 }
 
-const CourseReviewForm = ({ formData, onFormDataChange, getRatingLabel }: CourseReviewFormProps) => {
-  const courseOptions = [
-    { code: "COMP 102", name: "Introduction to Computing" },
-    { code: "COMP 202", name: "Programming Methodology" },
-    { code: "ELEC 221", name: "Electric Circuits" },
-    { code: "MATH 120", name: "Differential and Integral Calculus" },
-    { code: "PSYC 100", name: "Introduction to Psychology" },
-    { code: "BUSI 200", name: "Introduction to Business" },
-    { code: "CHEM 112", name: "General Chemistry" }
-  ];
+const CourseReviewForm = ({
+  formData,
+  onFormDataChange,
+  getRatingLabel,
+}: CourseReviewFormProps) => {
+  const [professorList, setProfessorList] = useState<string[]>([]);
+  const [courseOptions, setCourseOptions] = useState<{ code: string; name: string }[]>([]);
+  const [searchParams] = useSearchParams();
+  const courseCodeFromQuery = searchParams.get("code") || "";
+
+  useEffect(() => {
+    const fetchCoursesAndProfessors = async () => {
+      try {
+        // Fetch courses
+        const courseRes = await fetch("http://localhost:8000/api/v1/courses");
+        const courseData = await courseRes.json();
+        if (Array.isArray(courseData)) {
+          const formatted = courseData.map((course: any) => ({
+            code: course.code,
+            name: course.title,
+          }));
+          setCourseOptions(formatted);
+
+          // Auto-select course if query param matches a course code
+          if (
+            courseCodeFromQuery &&
+            formatted.some((c) => c.code === courseCodeFromQuery) &&
+            formData.courseCode !== courseCodeFromQuery
+          ) {
+            const course = formatted.find((c) => c.code === courseCodeFromQuery);
+            onFormDataChange({
+              ...formData,
+              courseCode: courseCodeFromQuery,
+              courseName: course?.name || "",
+            });
+          }
+        }
+
+        // Fetch professors
+        const profRes = await fetch("http://localhost:8000/api/v1/professors");
+        const profData = await profRes.json();
+        if (Array.isArray(profData)) {
+          const names = profData.map((p: any) => p.name);
+          setProfessorList(names);
+        }
+      } catch (err) {
+        console.error("Failed to fetch courses or professors", err);
+      }
+    };
+
+    fetchCoursesAndProfessors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (
+      courseCodeFromQuery &&
+      courseOptions.length > 0 &&
+      courseOptions.some((c) => c.code === courseCodeFromQuery) &&
+      formData.courseCode !== courseCodeFromQuery
+    ) {
+      const course = courseOptions.find((c) => c.code === courseCodeFromQuery);
+      onFormDataChange({
+        ...formData,
+        courseCode: courseCodeFromQuery,
+        courseName: course?.name || "",
+      });
+    }
+  }, [courseCodeFromQuery, courseOptions, formData.courseCode, formData, onFormDataChange]);
 
   const terms = [
     "Summer 2025",
@@ -46,11 +113,11 @@ const CourseReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Course
   ];
 
   const handleCourseSelect = (courseCode: string) => {
-    const course = courseOptions.find(c => c.code === courseCode);
+    const course = courseOptions.find((c) => c.code === courseCode);
     onFormDataChange({
       ...formData,
       courseCode,
-      courseName: course?.name || ""
+      courseName: course?.name || "",
     });
   };
 
@@ -64,8 +131,8 @@ const CourseReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Course
             <SelectTrigger>
               <SelectValue placeholder="Select a course" />
             </SelectTrigger>
-            <SelectContent>
-              {courseOptions.map(course => (
+            <SelectContent side="bottom" position="popper" avoidCollisions={false}>
+              {courseOptions.map((course) => (
                 <SelectItem key={course.code} value={course.code}>
                   {course.code}
                 </SelectItem>
@@ -89,22 +156,42 @@ const CourseReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Course
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <Label htmlFor="instructor">Instructor Name *</Label>
-          <Input
-            id="instructor"
+          <Select
             value={formData.instructor}
-            onChange={(e) => onFormDataChange({ ...formData, instructor: e.target.value })}
-            placeholder="e.g., Dr. Smith"
-          />
+            onValueChange={(value) =>
+              onFormDataChange({ ...formData, instructor: value })
+            }
+          >
+            <SelectTrigger>
+              <SelectValue
+                placeholder={
+                  professorList.length ? "Select an instructor" : "Loading..."
+                }
+              />
+            </SelectTrigger>
+            <SelectContent side="bottom" position="popper" avoidCollisions={false}>
+              {professorList.map((prof) => (
+                <SelectItem key={prof} value={prof}>
+                  {prof}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <Label htmlFor="term">Term Taken *</Label>
-          <Select value={formData.term} onValueChange={(value) => onFormDataChange({ ...formData, term: value })}>
+          <Select
+            value={formData.term}
+            onValueChange={(value) => onFormDataChange({ ...formData, term: value })}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select term" />
             </SelectTrigger>
-            <SelectContent>
-              {terms.map(term => (
-                <SelectItem key={term} value={term}>{term}</SelectItem>
+            <SelectContent side="bottom" position="popper" avoidCollisions={false}>
+              {terms.map((term) => (
+                <SelectItem key={term} value={term}>
+                  {term}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -114,7 +201,7 @@ const CourseReviewForm = ({ formData, onFormDataChange, getRatingLabel }: Course
       {/* Course Ratings */}
       <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
         <h3 className="font-semibold text-lg">Rate Your Experience</h3>
-        
+
         <RatingSlider
           label="Overall Rating"
           value={formData.overallRating}
