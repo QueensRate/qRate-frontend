@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Star, Search, Filter, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Navbar } from "./Navbar";
+import Footer from "./Footer";
 import axios from "axios";
 
 const BrowseProfessors = () => {
@@ -182,6 +183,7 @@ const BrowseProfessors = () => {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

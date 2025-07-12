@@ -58,7 +58,7 @@ const ProfessorDetail = () => {
   
         setProfessor({
           name: name?.replace(/%20/g, " ") || "Professor",
-          department: reviews[0]?.department || "N/A",
+          department: matchedProfessor?.faculty || reviews[0]?.department || "N/A",
           title: matchedProfessor?.professor_type || "Professor",
           description: matchedProfessor?.biography || "No biography available.",
           ratings: {

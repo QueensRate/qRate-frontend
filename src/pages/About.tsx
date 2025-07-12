@@ -105,7 +105,7 @@ const About = () => {
             <p className="text-gray-600 mb-6">See what other students are saying and plan your schedule with confidence.</p>
             <div className="flex justify-center gap-4">
               <Button asChild>
-                <Link to="/browse">Browse Courses</Link>
+                <Link to="/browse-courses">Browse Courses</Link>
               </Button>
               <Button variant="outline" asChild>
                 <Link to="/submit-review">Submit a Review</Link>
