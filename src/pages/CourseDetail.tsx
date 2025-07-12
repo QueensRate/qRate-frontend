@@ -85,9 +85,11 @@ const CourseDetail = () => {
                 <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
                 <span className="text-3xl font-bold">{course.ratings.overall}</span>
               </div>
-              <Button className="bg-blue-900 hover:bg-blue-800 text-white">
-                Write a Review
-              </Button>
+              <Link to={`/submit-review?code=${encodeURIComponent(course.code)}`}>
+                <Button className="bg-blue-900 hover:bg-blue-800 text-white">
+                  Write a Review
+                </Button>
+              </Link>
             </div>
           </div>
 
