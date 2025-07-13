@@ -41,7 +41,15 @@ const BrowseCourses = () => {
   const departments = [
     "Faculty of Arts and Science",
     "Smith School of Business",
-    "Smith Engineering",
+    "Chemical Engineering",
+    "Civil Engineering",
+    "Electrical and Computer Engineering",
+    "Engineering Physics",
+    "Geological Engineering",
+    "Mathematics and Engineering",
+    "Mechanical and Materials Engineering",
+    "Mechatronics and Robotics Engineering",
+    "Mining Engineering",
     "Faculty of Health Sciences",
     "Faculty of Education",
     "Faculty of Law"
@@ -62,9 +70,9 @@ const BrowseCourses = () => {
     const matchesRating =
       !selectedRating ||
       selectedRating === "all" ||
-      (selectedRating === "4+" && course.rating >= 4) ||
-      (selectedRating === "3+" && course.rating >= 3) ||
-      (selectedRating === "2+" && course.rating >= 2);
+      (selectedRating === "4+" && course.avg_rating >= 4) ||
+      (selectedRating === "3+" && course.avg_rating >= 3) ||
+      (selectedRating === "2+" && course.avg_rating >= 2);
 
     return matchesSearch && matchesDepartment && matchesRating;
   });
