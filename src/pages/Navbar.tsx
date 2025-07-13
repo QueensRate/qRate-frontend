@@ -27,12 +27,14 @@ export const Navbar = () => {
           <NavLink to="/about" className={linkClasses}>
             About
           </NavLink>
+          <NavLink to="/sign-in" className={linkClasses}>
           <Button
             variant="outline"
             className="border-blue-900 text-blue-900 hover:bg-blue-900 hover:text-white"
           >
             Sign In
           </Button>
+          </NavLink>
         </nav>
       </div>
     </header>
