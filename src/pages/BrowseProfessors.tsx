@@ -36,10 +36,16 @@ const BrowseProfessors = () => {
 
   const departments = [
     "Faculty of Arts and Science",
-    "Mechanical and Materials Engineering",
-    "Electrical and Computer Engineering",
     "Smith School of Business",
-    "Smith Engineering",
+    "Chemical Engineering",
+    "Civil Engineering",
+    "Electrical and Computer Engineering",
+    "Engineering Physics",
+    "Geological Engineering",
+    "Mathematics and Engineering",
+    "Mechanical and Materials Engineering",
+    "Mechatronics and Robotics Engineering",
+    "Mining Engineering",
     "Faculty of Health Sciences",
     "Faculty of Education",
     "Faculty of Law"

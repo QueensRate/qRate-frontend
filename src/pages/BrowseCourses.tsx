@@ -41,7 +41,15 @@ const BrowseCourses = () => {
   const departments = [
     "Faculty of Arts and Science",
     "Smith School of Business",
-    "Smith Engineering",
+    "Chemical Engineering",
+    "Civil Engineering",
+    "Electrical and Computer Engineering",
+    "Engineering Physics",
+    "Geological Engineering",
+    "Mathematics and Engineering",
+    "Mechanical and Materials Engineering",
+    "Mechatronics and Robotics Engineering",
+    "Mining Engineering",
     "Faculty of Health Sciences",
     "Faculty of Education",
     "Faculty of Law"
