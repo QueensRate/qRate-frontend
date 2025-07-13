@@ -9,41 +9,48 @@ const SignIn: React.FC = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError('');
 
-    // Validate @queensu.ca email
-    if (!email.endsWith('@queensu.ca')) {
-      setError('Please use a valid @queensu.ca email address.');
+  // Validate @queensu.ca email
+  if (!email.endsWith('@queensu.ca')) {
+    setError('Please use a valid @queensu.ca email address.');
+    return;
+  }
+
+  if (isSignIn) {
+    // Sign-in logic
+    try {
+      const response = await fetch('http://localhost:8000/api/v1/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        navigate('/'); // Redirect to frontend home page[](http://localhost:8080/)
+      } else {
+        setError(data.error || 'Login failed.');
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+    }
+  } else {
+    // Sign-up logic (placeholder, to be implemented)
+    if (password !== confirmPassword) {
+      setError('Passwords do not match.');
       return;
     }
-
-    if (isSignIn) {
-      // Sign-in logic
-      try {
-        console.log('Attempting sign-in with:', { email, password });
-        // Replace with API call, e.g., await fetch('/api/login', ...)
-        navigate('/dashboard'); // Redirect on success
-      } catch (err) {
-        setError('Invalid email or password. Please try again.');
-      }
-    } else {
-      // Sign-up logic
-      if (password !== confirmPassword) {
-        setError('Passwords do not match.');
-        return;
-      }
-      try {
-        console.log('Attempting sign-up with:', { email, password });
-        // Replace with API call, e.g., await fetch('/api/register', ...)
-        // Optionally, redirect to a verification page or back to sign-in
-        setIsSignIn(true); // Switch to sign-in after successful sign-up
-      } catch (err) {
-        setError('Sign-up failed. Please try again.');
-      }
+    try {
+      console.log('Attempting sign-up with:', { email, password });
+      // Replace with /api/v1/auth/register call later
+      setIsSignIn(true); // Switch to sign-in after sign-up
+    } catch (err) {
+      setError('Sign-up failed. Please try again.');
     }
-  };
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
