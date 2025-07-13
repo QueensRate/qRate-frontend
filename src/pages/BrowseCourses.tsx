@@ -62,9 +62,9 @@ const BrowseCourses = () => {
     const matchesRating =
       !selectedRating ||
       selectedRating === "all" ||
-      (selectedRating === "4+" && course.rating >= 4) ||
-      (selectedRating === "3+" && course.rating >= 3) ||
-      (selectedRating === "2+" && course.rating >= 2);
+      (selectedRating === "4+" && course.avg_rating >= 4) ||
+      (selectedRating === "3+" && course.avg_rating >= 3) ||
+      (selectedRating === "2+" && course.avg_rating >= 2);
 
     return matchesSearch && matchesDepartment && matchesRating;
   });
