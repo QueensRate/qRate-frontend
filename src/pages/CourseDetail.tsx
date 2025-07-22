@@ -17,7 +17,7 @@ const CourseDetail = () => {
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const res = await axios.get(`http://qrate-backend.azurewebsites.net/api/v1/courses/${id}`);
+        const res = await axios.get(`https://qrate-backend.azurewebsites.net/api/v1/courses/${id}`);
         setCourse(res.data);
       } catch (error) {
         console.error("Error fetching course data:", error);

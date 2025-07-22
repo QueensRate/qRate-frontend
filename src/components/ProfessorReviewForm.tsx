@@ -70,7 +70,7 @@ const ProfessorReviewForm = ({
   useEffect(() => {
     const fetchProfessors = async () => {
       try {
-        const res = await fetch("http://qrate-backend.azurewebsites.net/api/v1/professors");
+        const res = await fetch("https://qrate-backend.azurewebsites.net/api/v1/professors");
         const data = await res.json();
         if (Array.isArray(data)) {
           const names = data.map((p: any) => p.name);

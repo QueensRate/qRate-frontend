@@ -98,7 +98,7 @@ const SubmitReview = () => {
         return;
       }
       try {
-        const response = await fetch("http://qrate-backend.azurewebsites.net/api/v1/reviews/new", {
+        const response = await fetch("https://qrate-backend.azurewebsites.net/api/v1/reviews/new", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -170,7 +170,7 @@ const SubmitReview = () => {
         return;
       }
       try {
-        const response = await fetch("http://qrate-backend.azurewebsites.net/api/v1/professor-reviews/new", {
+        const response = await fetch("https://qrate-backend.azurewebsites.net/api/v1/professor-reviews/new", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
