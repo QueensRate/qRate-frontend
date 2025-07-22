@@ -26,7 +26,7 @@ const BrowseCourses = () => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:8000/api/v1/courses");
+        const res = await axios.get("http://qrate-backend.azurewebsites.net/api/v1/courses");
         setCourses(res.data);
       } catch (error) {
         console.error("Failed to fetch courses:", error);

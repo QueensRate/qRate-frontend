@@ -21,7 +21,7 @@ const BrowseProfessors = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("http://localhost:8000/api/v1/professors");
+        const res = await axios.get("http://qrate-backend.azurewebsites.net/api/v1/professors");
         const professorList = Array.isArray(res.data) ? res.data : [];
         setProfessors(professorList);
       } catch (error) {

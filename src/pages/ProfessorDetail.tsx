@@ -28,11 +28,11 @@ const ProfessorDetail = () => {
         setLoading(true);
         const encodedName = encodeURIComponent(name);
   
-        const reviewRes = await fetch(`http://localhost:8000/api/v1/professor-reviews/search?name=${encodedName}`);
+        const reviewRes = await fetch(`http://qrate-backend.azurewebsites.net/api/v1/professor-reviews/search?name=${encodedName}`);
         const reviews = await reviewRes.json();
         if (!reviewRes.ok) throw new Error(reviews.error || "Failed to fetch professor reviews");
   
-        const profRes = await fetch("http://localhost:8000/api/v1/professors");
+        const profRes = await fetch("http://qrate-backend.azurewebsites.net/api/v1/professors");
         const profs = await profRes.json();
         if (!profRes.ok) throw new Error(profs.error || "Failed to fetch professor details");
   

@@ -22,7 +22,7 @@ const SignIn: React.FC = () => {
   if (isSignIn) {
     // Sign-in logic
     try {
-      const response = await fetch('http://localhost:8000/api/v1/auth/login', {
+      const response = await fetch('http://qrate-backend.azurewebsites.net/api/v1/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
