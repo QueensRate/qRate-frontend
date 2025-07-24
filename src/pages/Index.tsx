@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Star, Search, Users, BookOpen, TrendingUp, Quote } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Navbar } from "./Navbar";
-import heroImage from "../../public/queens-backdrop.jpg";
+const heroImage = "/queens-backdrop.jpg";
 import Footer from "./Footer";
 import TypingHeadline from "@/components/TypingHeadline";
 

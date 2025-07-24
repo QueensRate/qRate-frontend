@@ -13,7 +13,7 @@ const developers = [
     graduationYear: "2026",
     degree: "Computer Engineering",
     description: "Hey everyone! A little bit about me, I'm obsessed with AI, full-stack development, and hardware architecture. I'm also a huge UFC fan so hit me up for anything MMA related!",
-    profileImage: "../../public/nathan_daniel.jpg",
+    profileImage: "/nathan_daniel.jpg",
     github: "https://github.com/nathanddaniel",
     linkedin: "https://www.linkedin.com/in/nathan-daniel-nd/"
   },
@@ -23,7 +23,7 @@ const developers = [
     graduationYear: "2026",
     degree: "Computer Engineering",
     description: "Backend specialist with expertise in database design and API development. Architected the course data management system for qRate.",
-    profileImage: "../../public/lucas_srigley.jpg",
+    profileImage: "/lucas_srigley.jpg",
     github: "https://github.com/lucas-srigley",
     linkedin: "https://www.linkedin.com/in/lucas-srigley/"
   },
@@ -33,7 +33,7 @@ const developers = [
     graduationYear: "2026",
     degree: "Computer Engineering",
     description: "Data enthusiast and algorithm optimizer. Developed the rating and review aggregation system that powers qRate's course recommendations.",
-    profileImage: "../../public/jamie_bell.jpg",
+    profileImage: "/jamie_bell.jpg",
     github: "https://github.com/jamiebell8bit",
     linkedin: "https://www.linkedin.com/in/james-bell13/"
   }, 
@@ -43,7 +43,7 @@ const developers = [
     graduationYear: "2026",
     degree: "Computer Engineering",
     description: "Data enthusiast and algorithm optimizer. Developed the rating and review aggregation system that powers qRate's course recommendations.",
-    profileImage: "../../public/nolan_steed.jpg",
+    profileImage: "/nolan_steed.jpg",
     github: "https://github.com/jamiebell8bit",
     linkedin: "https://www.linkedin.com/in/nolan-steed/"
   }
