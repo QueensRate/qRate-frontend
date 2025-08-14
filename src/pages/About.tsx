@@ -5,6 +5,7 @@ import { Github, Linkedin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import Footer from "@/pages/Footer";
+import { useEffect } from "react";
 
 const developers = [
   {
@@ -50,8 +51,11 @@ const developers = [
 ];
 
 const About = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-20">
       <Navbar />
 
       {/* Main Content */}

@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { Navbar } from "./Navbar";
 import Footer from "./Footer";
+import { useInView } from "react-intersection-observer";
 
 const BrowseCourses = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -21,22 +22,43 @@ const BrowseCourses = () => {
   const [selectedRating, setSelectedRating] = useState("");
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
+  const { ref, inView } = useInView();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("https://qrate-backend.azurewebsites.net/api/v1/courses");
-        setCourses(res.data);
+        const res = await axios.get(`http://localhost:8000/api/v1/courses?page=${page}&limit=10`);
+        const newCourses = res.data.courses;
+
+        setCourses(prev => [...prev, ...newCourses]);
+
+        if (res.data.totalCount) {
+          setTotalCount(res.data.totalCount);
+        }
+
+        if (newCourses.length === 0 || newCourses.length < 10) {
+          setHasMore(false); // No more data to load
+        }
       } catch (error) {
         console.error("Failed to fetch courses:", error);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchCourses();
-  }, []);
+  }, [page]);
+
+  useEffect(() => {
+    if (inView && hasMore && !loading) {
+      setPage(prev => prev + 1);
+    }
+  }, [inView, hasMore, loading]);  
 
   const departments = [
     "Faculty of Arts and Science",
@@ -78,7 +100,7 @@ const BrowseCourses = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-20">
       <Navbar />
 
       <div className="container mx-auto px-4 py-8">
@@ -132,12 +154,8 @@ const BrowseCourses = () => {
         {/* Summary */}
         <div className="flex items-center justify-between mb-6">
           <p className="text-gray-600">
-            Showing {filteredCourses.length} of {courses.length} courses
+            Showing {filteredCourses.length} of {totalCount} courses
           </p>
-          <div className="flex items-center space-x-2 text-sm text-gray-500">
-            <Filter className="h-4 w-4" />
-            <span>Sort by: Most Reviews</span>
-          </div>
         </div>
 
         {/* Course Grid */}
@@ -202,6 +220,12 @@ const BrowseCourses = () => {
             </Link>
           ))}
         </div>
+
+        {hasMore && (
+          <div ref={ref} className="py-10 text-center text-gray-500">
+            {loading ? "Loading more courses..." : "Scroll to load more"}
+          </div>
+        )}
 
         {/* No Results */}
         {filteredCourses.length === 0 && (

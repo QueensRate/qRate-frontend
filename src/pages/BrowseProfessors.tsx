@@ -8,31 +8,46 @@ import { Link } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import Footer from "./Footer";
 import axios from "axios";
+import { useInView } from "react-intersection-observer";
 
 const BrowseProfessors = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedRating, setSelectedRating] = useState("");
-
   const [professors, setProfessors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
+  const { ref, inView } = useInView();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await axios.get("https://qrate-backend.azurewebsites.net/api/v1/professors");
-        const professorList = Array.isArray(res.data) ? res.data : [];
-        setProfessors(professorList);
+        const res = await axios.get(`http://localhost:8000/api/v1/professors?page=${page}&limit=10`);
+        const newProfessors = res.data.professors || [];
+  
+        setProfessors((prev) => [...prev, ...newProfessors]);
+  
+        if (res.data.totalCount) setTotalCount(res.data.totalCount);
+        if (newProfessors.length < 10) setHasMore(false);
       } catch (error) {
         console.error("Failed to fetch professors:", error);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchData();
-  }, []);
+  }, [page]);
+
+  useEffect(() => {
+    if (inView && hasMore && !loading) {
+      setPage((prev) => prev + 1);
+    }
+  }, [inView, hasMore, loading]);  
 
   const departments = [
     "Faculty of Arts and Science",
@@ -72,7 +87,7 @@ const BrowseProfessors = () => {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-20">
       <Navbar />
 
       <div className="container mx-auto px-4 py-8">
@@ -123,12 +138,8 @@ const BrowseProfessors = () => {
 
         <div className="flex items-center justify-between mb-6">
           <p className="text-gray-600">
-            Showing {filteredProfessors.length} of {professors.length} professors
+            Showing {filteredProfessors.length} of {totalCount} professors
           </p>
-          <div className="flex items-center space-x-2 text-sm text-gray-500">
-            <Filter className="h-4 w-4" />
-            <span>Sort by: Most Reviews</span>
-          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -180,6 +191,12 @@ const BrowseProfessors = () => {
             </Link>
           ))}
         </div>
+
+        {hasMore && (
+          <div ref={ref} className="py-10 text-center text-gray-500">
+            {loading ? "Loading more professors..." : "Scroll to load more"}
+          </div>
+        )}
 
         {filteredProfessors.length === 0 && (
           <div className="text-center py-12">

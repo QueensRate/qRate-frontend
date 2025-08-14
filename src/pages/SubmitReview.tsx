@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, BookOpen, User } from "lucide-react";
@@ -12,11 +12,14 @@ import ReviewTypeToggle from "@/components/ReviewTypeToggle";
 import CourseReviewForm from "@/components/CourseReviewForm";
 import ProfessorReviewForm from "@/components/ProfessorReviewForm";
 import ReviewGuidelines from "@/components/ReviewGuidelines";
+import { useAuth } from "../hooks/use-auth";
 
 const SubmitReview = () => {
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const professorNameFromQuery = searchParams.get("name") || "";
+  const navigate = useNavigate();
+  const { userEmail, token } = useAuth();
 
   // Auto-select review type based on URL param
   const [reviewType, setReviewType] = useState(
@@ -51,6 +54,7 @@ const SubmitReview = () => {
 
   // Sync professor name from URL to form data and switch tab
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (professorNameFromQuery) {
       setProfessorFormData((prev) => ({
         ...prev,
@@ -59,6 +63,16 @@ const SubmitReview = () => {
       setReviewType("professor");
     }
   }, [professorNameFromQuery]);
+
+  if (!userEmail) {
+    toast({
+      title: "Authentication Required",
+      description: "You must be signed in to leave a review.",
+      variant: "destructive",
+    });
+    navigate("/sign-in");
+    return null; // Prevent rendering the content to avoid flash
+  }
 
   const getRatingLabel = (value: number, type: string) => {
     if (type === "difficulty" || type === "workload") {
@@ -98,9 +112,12 @@ const SubmitReview = () => {
         return;
       }
       try {
-        const response = await fetch("https://qrate-backend.azurewebsites.net/api/v1/reviews/new", {
+        const response = await fetch("http://localhost:8000/api/v1/reviews/new", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
           body: JSON.stringify({
             courseCode: courseFormData.courseCode,
             courseName: courseFormData.courseName,
@@ -111,11 +128,7 @@ const SubmitReview = () => {
             usefulness: courseFormData.usefulness[0],
             workload: courseFormData.workload[0],
             teaching: courseFormData.teaching[0],
-            comment: courseFormData.comment,
-            user: {
-              name: "Anonymous",
-              userId: "guest-123"
-            }
+            comment: courseFormData.comment
           })
         });
 
@@ -170,9 +183,12 @@ const SubmitReview = () => {
         return;
       }
       try {
-        const response = await fetch("https://qrate-backend.azurewebsites.net/api/v1/professor-reviews/new", {
+        const response = await fetch("http://localhost:8000/api/v1/professor-reviews/new", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
           body: JSON.stringify({
             professorName: professorFormData.professorName,
             department: professorFormData.department,
@@ -183,11 +199,7 @@ const SubmitReview = () => {
             helpfulness: professorFormData.helpfulness[0],
             clarity: professorFormData.clarity[0],
             wouldTakeAgain: professorFormData.wouldTakeAgain[0],
-            comment: professorFormData.comment,
-            user: {
-              name: "Anonymous",
-              userId: "guest-123"
-            }
+            comment: professorFormData.comment
           })
         });
 
@@ -223,7 +235,7 @@ const SubmitReview = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-20">
       <Navbar />
 
       <div className="container mx-auto px-4 py-8">

@@ -15,9 +15,10 @@ const CourseDetail = () => {
   const [helpfulReviews, setHelpfulReviews] = useState<{ [key: number]: boolean }>({});
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchCourse = async () => {
       try {
-        const res = await axios.get(`https://qrate-backend.azurewebsites.net/api/v1/courses/${id}`);
+        const res = await axios.get(`http://localhost:8000/api/v1/courses/${id}`);
         setCourse(res.data);
       } catch (error) {
         console.error("Error fetching course data:", error);
@@ -52,7 +53,7 @@ const CourseDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-20">
       <Navbar />
 
       <div className="container mx-auto px-4 py-8">

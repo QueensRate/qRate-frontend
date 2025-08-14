@@ -23,17 +23,19 @@ const ProfessorDetail = () => {
   const [helpfulReviews, setHelpfulReviews] = useState<{ [key: number]: boolean }>({});
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchProfessor = async () => {
       try {
         setLoading(true);
         const encodedName = encodeURIComponent(name);
   
-        const reviewRes = await fetch(`https://qrate-backend.azurewebsites.net/api/v1/professor-reviews/search?name=${encodedName}`);
+        const reviewRes = await fetch(`http://localhost:8000/api/v1/professor-reviews/search?name=${encodedName}`);
         const reviews = await reviewRes.json();
         if (!reviewRes.ok) throw new Error(reviews.error || "Failed to fetch professor reviews");
   
-        const profRes = await fetch("https://qrate-backend.azurewebsites.net/api/v1/professors");
-        const profs = await profRes.json();
+        const profRes = await fetch("http://localhost:8000/api/v1/professors?limit=1000");
+        const profData = await profRes.json();
+        const profs = profData.professors || [];
         if (!profRes.ok) throw new Error(profs.error || "Failed to fetch professor details");
   
         const matchedProfessor = profs.find(
@@ -117,7 +119,7 @@ const ProfessorDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 pt-20">
         <Navbar />
         <div className="container mx-auto px-4 py-8">
           <p>Loading professor data...</p>
@@ -128,7 +130,7 @@ const ProfessorDetail = () => {
 
   if (error || !professor) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 pt-20">
         <Navbar />
         <div className="container mx-auto px-4 py-8">
           <p className="text-red-600">Error: {error || "Professor not found"}</p>
@@ -141,7 +143,7 @@ const ProfessorDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pt-20">
       <Navbar />
 
       <div className="container mx-auto px-4 py-8">
