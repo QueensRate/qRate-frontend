@@ -32,7 +32,7 @@ const BrowseCourses = () => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`http://localhost:8000/api/v1/courses?page=${page}&limit=10`);
+        const res = await axios.get(`https://qrate-backend.azurewebsites.net/api/v1/courses?page=${page}&limit=10`);
         const newCourses = res.data.courses;
 
         setCourses(prev => [...prev, ...newCourses]);

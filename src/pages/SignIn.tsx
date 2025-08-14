@@ -30,7 +30,7 @@ const SignIn: React.FC = () => {
 
     if (isSignIn) {
       try {
-        const response = await fetch('http://localhost:8000/api/v1/auth/login', {
+        const response = await fetch('https://qrate-backend.azurewebsites.net/api/v1/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
@@ -52,7 +52,7 @@ const SignIn: React.FC = () => {
         return;
       }
       try {
-        const response = await fetch('http://localhost:8000/api/v1/auth/register', {
+        const response = await fetch('https://qrate-backend.azurewebsites.net/api/v1/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),

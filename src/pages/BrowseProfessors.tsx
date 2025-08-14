@@ -26,7 +26,7 @@ const BrowseProfessors = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`http://localhost:8000/api/v1/professors?page=${page}&limit=10`);
+        const res = await axios.get(`https://qrate-backend.azurewebsites.net/api/v1/professors?page=${page}&limit=10`);
         const newProfessors = res.data.professors || [];
   
         setProfessors((prev) => [...prev, ...newProfessors]);

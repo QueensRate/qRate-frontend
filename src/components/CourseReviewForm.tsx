@@ -45,7 +45,7 @@ const CourseReviewForm = ({
     const fetchCoursesAndProfessors = async () => {
       try {
         // Fetch courses
-        const courseRes = await fetch("http://localhost:8000/api/v1/courses");
+        const courseRes = await fetch("https://qrate-backend.azurewebsites.net/api/v1/courses");
         const courseData = await courseRes.json();
         if (Array.isArray(courseData)) {
           const formatted = courseData.map((course: any) => ({
@@ -70,7 +70,7 @@ const CourseReviewForm = ({
         }
 
         // Fetch professors
-        const profRes = await fetch("http://localhost:8000/api/v1/professors");
+        const profRes = await fetch("https://qrate-backend.azurewebsites.net/api/v1/professors");
         const profData = await profRes.json();
         if (Array.isArray(profData)) {
           const names = profData.map((p: any) => p.name);
